@@ -1,0 +1,59 @@
+<div class="center" style="background-color: rgb(27, 25, 28); height: 100%">
+  <div *ngIf="hasLoggedIn; then thenBlock; else elseBlock"></div>
+  <ng-template #thenBlock>
+    <h1>lol</h1>
+  </ng-template>
+  <ng-template #elseBlock>
+    <div
+      class="center-in"
+      style="height: 800px; min-height: 800px; max-height: 800px"
+    >
+      <div
+        class="flex-center padding-margin-zero"
+        style="height: 150px; min-height: 150px; max-height: 150px"
+      >
+        <h1
+          style="
+            font-size: xx-large;
+            color: white;
+            font-family: 'Special Elite', cursive;
+          "
+        >
+          Wicked Cranium Cradle
+        </h1>
+      </div>
+
+      <div
+        class="flex-center padding-margin-zero"
+        style="height: 500px; min-height: 500px; max-height: 500px"
+      >
+        <img src="assets/logo-gif.gif" alt="Wicked Cranium Logo Gif" />
+      </div>
+      <div
+        class="flex-center padding-margin-zero"
+        style="height: 150px; min-height: 150px; max-height: 150px"
+      >
+        <div>
+          <p style="text-align: center">
+            <a (click)="login()" mat-raised-button class="buttons-class"
+              ><div
+                style="
+                  width: 500px;
+                  height: 60px;
+                  font-size: x-large;
+                  font-weight: 300;
+                  margin-right: -2px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                <span>Login to the Cradle</span>
+              </div></a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,48 @@
+/* You can add global styles to this file, and also import other style files */
+* {
+  font-family: "Special Elite", cursive;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+
+  background-color: rgb(27, 25, 28);
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.padding-margin-zero {
+  padding: 0;
+  margin: 0;
+}
+
+// open mat expansion panel only when the button is clicked
+span.mat-expansion-indicator {
+  pointer-events: visiblefill !important;
+  // and place the icon bottom right on top of the image
+  margin-right: 6px;
+  margin-bottom: 3px;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: inline-block;
+  position: absolute;
+}
+mat-expansion-panel-header {
+  // clicking anywhere else on the expansion panel doesn't do anything
+  pointer-events: none;
+}
+
+//remove padding from mat-expansion-panel-body
+
+.mat-expansion-panel-body {
+  padding: 0px !important;
+}

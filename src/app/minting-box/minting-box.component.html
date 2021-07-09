@@ -1,0 +1,172 @@
+<!-- <div
+  style="
+    background-color: blanchedalmond;
+    padding: 50px;
+    width: 500px;
+    height: 500px;
+    min-width: 300px;
+    min-height: 500px;
+    max-height: 500px;
+  "
+>
+ 
+</div> -->
+
+<mat-grid-list
+  style="min-width: 400px"
+  cols="1"
+  rowHeight="2:1"
+  gutterSize="20px"
+  [style]="{ margin: '20px' }"
+>
+  <mat-grid-tile>
+    <mat-card>
+      <div
+        *ngIf="
+          this.isMetamaskConnected;
+          then metamaskConnectedButton;
+          else metamaskNotConnectedButton
+        "
+      ></div>
+      <ng-template #metamaskConnectedButton>
+        <p>
+          <a
+            style="display: flex; justify-content: center; align-items: center"
+            mat-raised-button
+            disabled
+            class="buttons-class"
+            color="accent"
+          >
+            <mat-icon
+              aria-hidden="false"
+              aria-label="Connected to Metamask Icon"
+              >done</mat-icon
+            >
+            &nbsp;
+            <span style="font-weight: 300; font-size: large"
+              >Connected to Metamask</span
+            >
+            &nbsp;
+            <span
+              style="font-weight: 300; font-family: 'Special Elite', cursive"
+              >({{ this.metamaskAccount }})
+            </span>
+          </a>
+        </p>
+      </ng-template>
+      <ng-template #metamaskNotConnectedButton>
+        <div
+          *ngIf="
+            _window().ethereum;
+            then connectMetamask;
+            else downloadMetamask
+          "
+        ></div>
+
+        <ng-template #connectMetamask>
+          <p style="text-align: center">
+            <a
+              (click)="connectMetamaskMethod()"
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+              mat-raised-button
+              class="buttons-class"
+              color="primary"
+              ><span style="font-weight: 300; font-size: large"
+                >Connect to Metamask</span
+              ></a
+            >
+          </p>
+        </ng-template>
+        <ng-template #downloadMetamask>
+          <div style="text-align: center">
+            <a
+              (click)="connectMetamaskMethod()"
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+              mat-raised-button
+              disabled
+              class="buttons-class"
+              color="primary"
+              ><span style="font-weight: 300; font-size: large"
+                >Minting requires a Metamask wallet 😬</span
+              ></a
+            >
+            <br />
+
+            <p style="font-size: large">
+              What is Metamask? How can I download it? 🤔
+            </p>
+            <p>
+              Metamask is an extension for Chrome/Brave that acts as a wallet.
+              <a
+                target="_blank"
+                style="color: rgb(209, 129, 255)"
+                href="https://metamask.io/download"
+                >Link to download!</a
+              >
+            </p>
+            <p>
+              Get
+              <a
+                target="_blank"
+                style="color: rgb(209, 129, 255)"
+                href="https://ethereum.org/en/get-eth/"
+                >ETH</a
+              >
+              into your wallet, and reload the page! 🎉
+            </p>
+          </div>
+        </ng-template>
+      </ng-template>
+      <div *ngIf="this.isMetamaskConnected">
+        <section class="example-section">
+          <mat-form-field
+            style="
+              text-align: center;
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+            "
+            color="accent"
+          >
+            <mat-label style="font-size: large">Craniums to Mint</mat-label>
+            <input matInput type="number" [(ngModel)]="value" />
+          </mat-form-field>
+        </section>
+        <mat-slider
+          style="
+            text-align: center;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+          "
+          [(ngModel)]="value"
+          [max]="max"
+          [min]="min"
+          [step]="step"
+          [thumbLabel]="thumbLabel"
+          aria-label="unit(s)"
+        ></mat-slider>
+        <p style="text-align: center">
+          <a
+            (click)="signTransaction()"
+            style="display: flex; justify-content: center; align-items: center"
+            mat-raised-button
+            color="accent"
+            ><span style="font-weight: 300; font-size: large">Mint</span></a
+          >
+        </p>
+        <p>Note: Make sure you <em>edit</em> the Gas as per your tolerance!</p>
+        <p>Status: {{ transaction | json }}</p>
+      </div>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile></mat-grid-tile>
+</mat-grid-list>
