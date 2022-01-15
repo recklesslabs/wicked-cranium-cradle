@@ -4,7 +4,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "dist/virtual-scroll",
+    "public": "dist/wicked-cranium-cradle",
     "ignore": [
       "firebase.json",
       "**/.*",
