@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MintingBoxComponent } from './minting-box.component';
+import { EditDialogComponent } from './edit-dialog.component';
 
-describe('MintingBoxComponent', () => {
-  let component: MintingBoxComponent;
-  let fixture: ComponentFixture<MintingBoxComponent>;
+describe('EditDialogComponent', () => {
+  let component: EditDialogComponent;
+  let fixture: ComponentFixture<EditDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MintingBoxComponent ]
+      declarations: [ EditDialogComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MintingBoxComponent);
+    fixture = TestBed.createComponent(EditDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

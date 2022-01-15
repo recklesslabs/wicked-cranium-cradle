@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/cradle'),
+      dir: require('path').join(__dirname, './coverage/virtual-scroll'),
       subdir: '.',
       reporters: [
         { type: 'html' },

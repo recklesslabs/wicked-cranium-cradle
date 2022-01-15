@@ -1,59 +1,153 @@
-<div class="center" style="background-color: rgb(27, 25, 28); height: 100%">
-  <div *ngIf="hasLoggedIn; then thenBlock; else elseBlock"></div>
-  <ng-template #thenBlock>
-    <h1>lol</h1>
-  </ng-template>
-  <ng-template #elseBlock>
-    <div
-      class="center-in"
-      style="height: 800px; min-height: 800px; max-height: 800px"
-    >
-      <div
-        class="flex-center padding-margin-zero"
-        style="height: 150px; min-height: 150px; max-height: 150px"
-      >
-        <h1
-          style="
-            font-size: xx-large;
-            color: white;
-            font-family: 'Special Elite', cursive;
+<h1 class="headingStyling">wicked cranium cradle</h1>
+
+<!-- <button (click)="writeFakeData()">writefakedata</button> -->
+
+<div *ngIf="tokens.length > 0; then loggedIn; else notLoggedIn"></div>
+<ng-template #loggedIn>
+  <div class="cardsContainer">
+    <div class="displayCardsContainer">
+      <ng-container *ngIf="infinite | async as people">
+        <cdk-virtual-scroll-viewport
+          itemSize="160"
+          (scrolledIndexChange)="
+            nextBatch($event, people[people.length - 1].id)
           "
         >
-          Wicked Cranium Cradle
-        </h1>
-      </div>
+          <mat-card
+            *cdkVirtualFor="let p of people; let i = index; trackBy: trackByIdx"
+            style="padding: 0px"
+            class="animated lightSpeedIn"
+          >
+            <div style="display: flex">
+              <div style="width: 130px">
+                <!--  -->
 
-      <div
-        class="flex-center padding-margin-zero"
-        style="height: 500px; min-height: 500px; max-height: 500px"
-      >
-        <img src="assets/logo-gif.gif" alt="Wicked Cranium Logo Gif" />
-      </div>
-      <div
-        class="flex-center padding-margin-zero"
-        style="height: 150px; min-height: 150px; max-height: 150px"
-      >
-        <div>
-          <p style="text-align: center">
-            <a (click)="login()" mat-raised-button class="buttons-class"
-              ><div
-                style="
-                  width: 500px;
-                  height: 60px;
-                  font-size: x-large;
-                  font-weight: 300;
-                  margin-right: -2px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span>Login to the Cradle</span>
-              </div></a
-            >
-          </p>
-        </div>
-      </div>
+                <a
+                  target="_blank"
+                  [href]="
+                    'https://opensea.io/assets/0x85f740958906b317de6ed79663012859067e745b/' +
+                    p.id
+                  "
+                >
+                  <img
+                    height="130"
+                    width="130"
+                    [src]="
+                      'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+                      p.id +
+                      '.png'
+                    "
+                  />
+                </a>
+              </div>
+              <div style="width: 330px; padding: 7px">
+                <h4
+                  (click)="clickedHeader(p.link, p.name)"
+                  style="
+                    cursor: pointer;
+                    margin: 0px;
+                    font-family: 'Special Elite';
+                    width: 510px;
+                  "
+                >
+                  {{ p.id }} — {{ p.name }}
+                </h4>
+                <p
+                  style="
+                    font-family: 'Special Elite';
+                    margin: 5px;
+                    margin-top: 7px;
+                    width: 510px;
+                    height: 90px;
+                    min-height: 90px;
+                    overflow: auto;
+                  "
+                >
+                  {{ p.bio }}
+                </p>
+              </div>
+            </div>
+          </mat-card>
+
+          <p *ngIf="theEnd">That's the end of it!</p>
+        </cdk-virtual-scroll-viewport>
+      </ng-container>
     </div>
-  </ng-template>
-</div>
+    <div class="editableCardsContainer">
+      <ng-container *ngIf="tokens">
+        <cdk-virtual-scroll-viewport itemSize="160">
+          <mat-card
+            (click)="openEditDialog(t)"
+            *cdkVirtualFor="let t of tokens; let i = index"
+            class="animated lightSpeedIn"
+            style="padding: 0px; cursor: pointer"
+          >
+            <div style="display: flex">
+              <div style="width: 130px">
+                <img
+                  height="130"
+                  width="130"
+                  [src]="
+                    'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+                    t +
+                    '.png'
+                  "
+                />
+              </div>
+            </div>
+          </mat-card>
+        </cdk-virtual-scroll-viewport>
+      </ng-container>
+    </div>
+  </div>
+  <div
+    style="
+      width: 1024px;
+      margin: 0 auto;
+      height: 50px;
+      background-color: #000000;
+      margin-top: 10px;
+      display: flex;
+      align-items: space-around;
+      align-content: center;
+      justify-content: space-evenly;
+    "
+  >
+    <div style="margin-top: 10px">
+      <a
+        style="text-decoration: none; color: white"
+        href="https://twitter.com/wickedcraniums/"
+        target="_blank"
+        ><span>twitter.com/wickedcraniums</span></a
+      >
+    </div>
+    <div style="margin-top: 10px">
+      <a
+        style="text-decoration: none; color: white"
+        href="https://discord.gg/yBYAdy8fqX"
+        target="_blank"
+        ><span>discord.gg/yBYAdy8fqX</span></a
+      >
+    </div>
+    <div style="margin-top: 10px">
+      <a
+        style="text-decoration: none; color: white"
+        href="https://wickedcranium.com"
+        target="_blank"
+        ><span>wickedcranium.com</span></a
+      >
+    </div>
+  </div>
+</ng-template>
+<ng-template #notLoggedIn>
+  <div style="display: flex; justify-content: center">
+    <button
+      style="background-color: #7b8235"
+      mat-raised-button
+      (click)="login()"
+    >
+      <span style="font-family: 'Special Elite'">login</span>
+    </button>
+  </div>
+  <p style="text-align: center; padding: 30px">{{ message }}</p>
+</ng-template>

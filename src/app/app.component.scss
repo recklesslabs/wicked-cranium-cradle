@@ -1,0 +1,65 @@
+.headingStyling {
+  text-align: center;
+  font-size: xx-large;
+}
+
+.editableCardsContainer {
+  float: left;
+  width: 166px;
+  height: 700px;
+  overflow: auto;
+  margin: 5px;
+  background-color: #000000;
+}
+
+.displayCardsContainer {
+  float: left;
+  width: 700px;
+  height: 700px;
+  // overflow: auto;
+  margin: 5px;
+  background-color: #000000;
+}
+
+.cardsContainer {
+  width: 1024px;
+  height: 710px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  background-color: #000000;
+}
+
+// infinite scroll styling
+
+cdk-virtual-scroll-viewport,
+ul {
+  height: 700px;
+  // width: 80vw;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  list-style: none;
+  mat-card {
+    height: 130px;
+    margin: 10px;
+    // padding: 10px;
+    // $DarkSilver ==>
+    background-color: #ffffff;
+
+    box-shadow: 2px 2px 3px rgba($color: #888888, $alpha: 0.2);
+  }
+  &::-webkit-scrollbar {
+    width: 1em;
+  }
+
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #7b726a;
+  }
+}
