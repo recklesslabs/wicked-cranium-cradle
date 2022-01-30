@@ -42,13 +42,13 @@ import { LinkDialogComponent } from './link-dialog.component';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: 'AIzaSyAIMdPBsEW1m6IDEBEi3T8kt-N4Eh5865g',
-  authDomain: 'wicked-cranium-cradle.firebaseapp.com',
-  projectId: 'wicked-cranium-cradle',
-  storageBucket: 'wicked-cranium-cradle.appspot.com',
-  messagingSenderId: '971479538462',
-  appId: '1:971479538462:web:d2088151086e999e10870f',
-  measurementId: 'G-B94RFMF8Q5',
+  apiKey: 'AIzaSyDbrLIaFZomlneiEN1YM7wYrEaTHUPbdVU',
+  authDomain: 'wicked-cranium-cradle-testnet.firebaseapp.com',
+  projectId: 'wicked-cranium-cradle-testnet',
+  storageBucket: 'wicked-cranium-cradle-testnet.appspot.com',
+  messagingSenderId: '663270172205',
+  appId: '1:663270172205:web:8cccbcd3813fbd9c413aa4',
+  measurementId: 'G-VX5S4D5QW0',
 };
 
 @NgModule({

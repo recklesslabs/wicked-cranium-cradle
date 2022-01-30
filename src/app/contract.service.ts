@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { mainnetAbi, mainnetContract } from './constants';
+import { testnetAbi, testnetContract } from './constants';
 
 declare var Web3: any;
 declare var window: any;
@@ -33,15 +33,15 @@ export class ContractService {
       const walletAddress = accounts[0];
       var web3 = new Web3(Web3.givenProvider);
       window.contract = await new web3.eth.Contract(
-        mainnetAbi,
-        mainnetContract
+        testnetAbi,
+        testnetContract
       );
       try {
         const res = await window.ethereum.request({
           method: 'eth_call',
           params: [
             {
-              to: mainnetContract,
+              to: testnetContract,
               from: walletAddress,
               data: window.contract.methods
                 .balanceOf(walletAddress)
@@ -59,7 +59,7 @@ export class ContractService {
                 method: 'eth_call',
                 params: [
                   {
-                    to: mainnetContract,
+                    to: testnetContract,
                     from: walletAddress,
                     data: window.contract.methods
                       .tokenOfOwnerByIndex(walletAddress, i)
