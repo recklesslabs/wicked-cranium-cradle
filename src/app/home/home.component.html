@@ -1,0 +1,192 @@
+<!-- <button (click)="writeFakeData()">writefakedata</button> -->
+
+<div *ngIf="tokens.length > 0; then loggedIn; else notLoggedIn"></div>
+<ng-template #loggedIn>
+  <div class="cardsContainer">
+
+    <app-menu></app-menu>
+
+    <!---middle-profile-card-->
+    <div class="middle-section middle-profile-outer" style="display: none;">
+      <ng-container>
+
+        <mat-card class="animated lightSpeedIn">
+          <div class="profile-box">
+            <img class="home-profile-img" src="../../assets/images/2.png" />
+            <h3 class="user-id-name">
+              Skull #852472
+            </h3>
+          </div>
+        </mat-card>
+
+        <mat-card class="animated lightSpeedIn">
+          <div class="profile-social">
+            <div class="location">
+              <span>Location</span>
+              <div class="img-round">
+                <img src="../../assets/images/map-ic-gray.svg" />
+              </div>
+            </div>
+            <div class="location">
+              <span>Share</span>
+              <div class="img-round">
+                <img src="../../assets/images/twitter.svg" />
+              </div>
+              <div class="img-round">
+                <img src="../../assets/images/discord.svg" />
+              </div>
+            </div>
+            <div class="location">
+              <div class="img-round bg-trasparent">
+                <img src="../../assets/images/comment.png" />
+              </div>
+              <span>5 Comment</span>
+            </div>
+          </div>
+        </mat-card>
+        <mat-card class="home-comment-textarea animated lightSpeedIn">
+          <mat-form-field appearance="fill" class="animated fadeInDown">
+            <mat-label>Leave a comment</mat-label>
+            <textarea rows="4" cols="80" placeholder="" matInput></textarea>
+          </mat-form-field>
+        </mat-card>
+
+        <mat-card class="home-comment-wrapper animated lightSpeedIn">
+          <h4>Comment (5)</h4>
+          <div class="comment-outer">
+            <ul class="comment-list">
+              <li>
+                <div class="avtar">
+                  W
+                </div>
+                <div class="user-name">
+                  Wicked Craniums_Skull1_00287
+                </div>
+                <div class="description">
+                  Don’t forget your skull is your early access to @a0k1verse tomorrow.
+                </div>
+              </li>
+              <ul class="comment-list">
+                <li>
+                  <div class="avtar">
+                    W
+                  </div>
+                  <div class="user-name">
+                    Wicked Craniums_Skull1_00287
+                  </div>
+                  <div class="description">
+                    Don’t forget your skull is your early access to @a0k1verse tomorrow.
+                  </div>
+                </li>
+              </ul>
+            </ul>
+          </div>
+          <h5 class="show-more-replie">5 more replies</h5>
+        </mat-card>
+
+      </ng-container>
+    </div>
+    <!---end--middle-profile-card-->
+
+
+    <div class="displayCardsContainer">
+      <ng-container *ngIf="infinite | async as people">
+        <cdk-virtual-scroll-viewport itemSize="160" (scrolledIndexChange)="
+            nextBatch($event, people[people.length - 1].id)
+          ">
+          <mat-card (click)="openEditDialog(p)" *cdkVirtualFor="let p of people; let i = index; trackBy: trackByIdx" style="padding: 0px"
+            class="animated lightSpeedIn">
+            <div style="display: flex">
+              <div style="width: 130px">
+                <!--  -->
+
+                <!-- <a target="_blank" [href]=" 
+                    'https://opensea.io/assets/0x85f740958906b317de6ed79663012859067e745b/' +
+                    p.id
+                  "> -->
+                  <img height="130" width="130" [src]="
+                      'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+                      p.id +
+                      '.png'
+                    " />
+                <!--  </a> -->
+              </div>
+              <div style="width: 330px; padding: 7px">
+                <h4 style="
+                    cursor: pointer;
+                    margin: 0px;
+                    font-family: 'Special Elite';
+                    width: 510px;
+                  ">
+                  {{ p.id }} — {{ p.name }}
+                </h4>
+                <p style="
+                    font-family: 'Special Elite';
+                    margin: 5px;
+                    margin-top: 7px;
+                    width: 510px;
+                    height: 90px;
+                    min-height: 90px;
+                    overflow: auto;
+                  ">
+                  {{ p.bio }}
+                </p>
+              </div>
+            </div>
+          </mat-card>
+
+          <p *ngIf="theEnd">That's the end of it!</p>
+        </cdk-virtual-scroll-viewport>
+      </ng-container>
+    </div>
+
+
+    <div class="editableCardsContainer">
+
+      <ng-container *ngIf="tokens">
+
+        <swiper class="animated fadeInRight" [slidesPerView]="5" [direction]="'vertical'" #customSwiper>
+
+          <ng-template swiperSlide *ngFor="let t of tokens; let i = index">
+
+            <img (click)="openEditDialog(t)"
+              [src]="'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' + t + '.png'" />
+          </ng-template>
+
+        </swiper>
+        <div class="swiper-vertical">
+          <button (click)="onBack()" class="button-prev swiper-button-prev">
+          </button>
+          <button (click)="onNext()" class="button-next swiper-button-next">
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- <ng-container class="red" *ngIf="tokens">
+        <cdk-virtual-scroll-viewport itemSize="160">
+          <mat-card (click)="openEditDialog(t)" *cdkVirtualFor="let t of tokens; let i = index"
+            class="animated lightSpeedIn" style="padding: 0px; cursor: pointer">
+            <div style="display: flex">
+              <div style="width: 130px">
+                <img height="130" width="130" [src]="
+                    'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+                    t +
+                    '.png'
+                  " />
+              </div>
+            </div>
+          </mat-card>
+        </cdk-virtual-scroll-viewport>
+      </ng-container> -->
+    </div>
+  </div>
+
+</ng-template>
+<ng-template #notLoggedIn>
+  <div style="display: flex; justify-content: center">
+    <button style="background-color: #7b8235" mat-raised-button (click)="login()">
+      <span style="font-family: 'Special Elite'">login</span>
+    </button>
+  </div>
+  <p style="text-align: center; padding: 30px">{{ message }}</p>
+</ng-template>

@@ -1,0 +1,33 @@
+.middle-section {
+    width: 812px;
+    margin-right: 0;
+    .page-title {
+        padding: 15px 25px;
+        font-weight: normal;
+        font-size: 22px;
+        margin: 0;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #3e3e3e;
+        
+    }
+    .gallery-outer {
+        padding: 10px;
+        max-height: 610px;
+        overflow-y: auto;
+        
+        .grid-list {
+            display: flex;
+            flex-wrap: wrap;
+            .grid-item {
+                width: calc(20% - 25px);
+                margin: 10px 12px;
+                .gallery-img {
+                    object-fit: cover;
+                    width: 100%;
+                    border-radius: 10px;
+                    border: 2px solid #3e3e3e;
+                }
+            }
+        }
+    }
+}

@@ -39,6 +39,18 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { FormsModule } from '@angular/forms';
 import { LinkDialogComponent } from './link-dialog.component';
+import { MenuComponent } from './menu/menu.component';
+import { AppRoutingModule } from './app-routing.module';
+import { MessageComponent } from './message/message.component';
+import { HomeComponent } from './home/home.component';
+import { GalleryComponent } from './gallery/gallery.component';
+import { MapComponent } from './map/map.component';
+import { SliderComponent } from './slider/slider.component';
+import { SwiperModule } from 'swiper/angular';
+import { GoogleMapsModule } from '@angular/google-maps';
+import { TokenComponent } from './token/token.component';
+
+
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -52,7 +64,7 @@ const firebaseConfig = {
 };
 
 @NgModule({
-  declarations: [AppComponent, EditDialogComponent, LinkDialogComponent],
+  declarations: [AppComponent, EditDialogComponent, LinkDialogComponent, MenuComponent, MessageComponent, HomeComponent, GalleryComponent, MapComponent, SliderComponent, TokenComponent,],
   imports: [
     BrowserModule,
     ScrollingModule,
@@ -60,6 +72,7 @@ const firebaseConfig = {
     AngularFirestoreModule,
     FormsModule,
     BrowserAnimationsModule,
+    SwiperModule,
     MatCardModule,
     HttpClientModule,
     MatButtonModule,
@@ -67,6 +80,11 @@ const firebaseConfig = {
     MatFormFieldModule,
     MatCardModule,
     MatDialogModule,
+    AppRoutingModule,
+    MatListModule,
+    MatGridListModule,
+    MatSlideToggleModule,
+    GoogleMapsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

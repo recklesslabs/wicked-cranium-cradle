@@ -1,0 +1,80 @@
+@import "../../styles.scss";
+
+.no-msg-outer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    .img-avtar {
+        width: 180px;
+        height: 186px;
+    }
+    h1 {
+        margin: 30px 0 0;
+    }
+    p {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+            width: 23px;
+            margin-left: 12px;
+        }
+    }
+}
+.message-right-area {
+    .msg-user-list {
+        width: 300px;
+        .msg-title {
+            border-bottom: 1px solid $DarkSilver;
+            padding: 15px 10px;
+            margin: 0;
+        }
+        .list-outer {
+            ul {
+                list-style: none;
+                padding: 0;
+                margin-top: 15px;
+                li {
+                    padding: 8px 10px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    cursor: pointer;
+                    margin: 8px 0;
+                    transition: all 0.3s;
+                    &:hover{
+                        .name{
+                            color: #fff;
+                            transition: all 0.3s;
+                        }
+                    }
+                    .name{
+                        color: #9a9a9a;
+                        font-size: 14px;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        max-width: 80%;
+                        transition: all 0.3s;
+
+                        &.active{
+                            color: #fff;
+                        }
+                    }
+                    .count {
+                        background: #e02f21;
+                        width: 25px;
+                        height: 25px;
+                        border-radius: 50px;
+                        font-size: 14px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        color: #fff;
+                    }
+                }
+            }
+        }
+    }
+}

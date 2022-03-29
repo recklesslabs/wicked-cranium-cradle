@@ -1,0 +1,256 @@
+$DarkSilver: #707070;
+
+.editableCardsContainer {
+    float: left;
+    width: 166px;
+    height: 700px;
+    margin: 5px;
+    background-color: #141414;
+    position: relative;
+}
+
+.cdk-virtual-scroll-viewport::-webkit-scrollbar {
+    width: 5px !important;
+}
+
+.displayCardsContainer {
+    float: left;
+    width: 700px;
+    height: 700px;
+    margin: 0 8px;
+    background-color: #141414;
+    cdk-virtual-scroll-viewport {
+        height: inherit;
+        border: 1px solid $DarkSilver;
+        border-radius: 10px;
+        overflow-x: hidden;
+        * {
+            font-family: "Chelsea Market", cursive !important;
+        }
+        .end-of-it-text {
+            text-align: center;
+            margin: 25px 0;
+        }
+        .mat-card {
+            background-color: #1a1a1a;
+            box-shadow: inset 2px 5px 23px 6px rgb(0, 0, 0, 1);
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            a {
+                img {
+                    border-top-left-radius: 6px;
+                    border-bottom-left-radius: 6px;
+                }
+            }
+            .disc-info {
+                width: 472px;
+                padding: 10px;
+                h4 {
+                    cursor: pointer;
+                    margin: 0px;
+                }
+                p {
+                    font-size: 12px;
+                    margin-top: 7px;
+                    height: 90px;
+                    min-height: 90px;
+                    overflow: auto;
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+}
+
+.cardsContainer {
+    width: 1024px;
+    height: 710px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    background-color: #141414;
+}
+
+// infinite scroll styling
+
+cdk-virtual-scroll-viewport,
+ul {
+    // height: 700px;
+    // margin: 0 auto;
+    // display: flex;
+    // align-items: center;
+    // flex-direction: column;
+    // justify-content: center;
+    list-style: none;
+    mat-card {
+        height: 130px;
+        margin: 10px;
+        // padding: 10px;
+        // $DarkSilver ==>
+        background-color: #ffffff;
+
+        box-shadow: 2px 2px 3px rgba($color: #888888, $alpha: 0.2);
+    }
+    &::-webkit-scrollbar {
+        width: 1em;
+    }
+
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #7b726a;
+    }
+}
+
+.middle-profile-outer {
+    .mat-card {
+        background-color: transparent;
+        box-shadow: none;
+        font-family: "Chelsea Market", cursive;
+        .profile-box {
+            max-width: 120px;
+            text-align: center;
+            .home-profile-img {
+                height: 120px;
+                width: 100%;
+                object-fit: cover;
+                border-radius: 10px;
+                box-shadow: 13px 0px 29px #00000087;
+            }
+            h3 {
+                margin: 10px 0;
+                color: #9a9a9a;
+                font-size: 12px;
+                font-weight: 500;
+            }
+        }
+        .profile-social {
+            display: flex;
+            align-items: center;
+            .location {
+                display: flex;
+                align-items: center;
+                margin-right: 10px;
+                border-right: 1px solid #3e3e3e;
+                &:last-child {
+                    border-right: 0;
+                }
+                span {
+                    font-size: 12px;
+                    color: #9a9a9a;
+                    margin-right: 12px;
+                }
+                .img-round {
+                    background-color: #242424;
+                    height: 20px;
+                    width: 20px;
+                    border-radius: 50px;
+                    padding: 8px;
+                    margin-right: 10px;
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        filter: invert(63%) sepia(4%) saturate(103%) hue-rotate(325deg) brightness(96%) contrast(81%);
+                    }
+                }
+                .bg-trasparent {
+                    background-color: transparent;
+                    height: 20px;
+                    width: 20px;
+                    margin-right: 5px;
+                }
+            }
+        }
+    }
+}
+
+.home-comment-wrapper {
+    h4 {
+        color: #9a9a9a;
+        border: 1px solid #9a9a9a;
+        border-right: 0;
+        border-left: 0;
+        padding: 8px 0;
+        font-size: 14px;
+    }
+    .comment-outer {
+        position: relative;
+        &::after {
+            content: "";
+            width: 1px;
+            background: #707070;
+            position: absolute;
+            // height: 100%;
+            top: 25px;
+            left: 20px;
+            z-index: -1;
+            animation: increase 3s;
+            animation-fill-mode: forwards;
+
+            @keyframes increase {
+                0% {
+                    height: 0px;
+                }
+                100% {
+                    height: 100%;
+                }
+            }
+        }
+        .comment-list {
+            padding-left: 0;
+            margin: 0;
+            padding-left: 50px;
+            margin-top: 40px;
+            &:first-child {
+                padding-left: 0;
+                margin-top: 20px;
+            }
+
+            li {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                .avtar {
+                    height: 40px;
+                    width: 40px;
+                    background-color: #13486b;
+                    color: #fff;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 50px;
+                }
+                .user-name {
+                    font-size: 12px;
+                    color: #fff;
+                    margin-left: 12px;
+                }
+                .description {
+                    display: flex;
+                    width: 100%;
+                    color: #aeb9ff;
+                    font-size: 12px;
+                    padding-left: 52px;
+                }
+            }
+        }
+    }
+    .show-more-replie {
+        padding: 10px 0 0 15px;
+        color: #fff;
+        font-weight: 400;
+        cursor: pointer;
+        animation: blinker 5s linear forwards;
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    }
+}

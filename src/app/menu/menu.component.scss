@@ -1,0 +1,143 @@
+@import "../../styles.scss";
+
+.menu-section {
+  width: 200px;
+  .menu-card {
+    width: 200px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid $DarkSilver;
+    border-radius: 10px;
+    background-color: transparent;
+    font-family: "Chelsea Market", cursive;
+    line-height: 1;
+    margin-bottom: 25px;
+    transition: all 0.3s;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    .mat-card-title {
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+      margin: 10px 0 0;
+    }
+    .msg-badge {
+      background: #e02f21;
+      width: 25px;
+      height: 25px;
+      position: absolute;
+      border-radius: 50px;
+      font-size: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      right: -12px;
+      top: 4px;
+    }
+    .menu-img {
+      width: 57px;
+      text-align: center;
+      margin: 0 auto;
+      filter: drop-shadow(0px 9px 4px #000);
+      // box-shadow: 0px 7px 9px #000;
+      border-radius: 9px;
+      transition: all 0.3s;
+    }
+    .menu-inner {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &.home-menu {
+      path{
+        fill: #60593a;
+      }
+      &:hover {
+        transition: all 0.3s;
+        path {
+          fill: #b59a2e;
+          transition: all 0.3s;
+        }
+      }
+      &.active-link {
+        path {
+          fill: #b59a2e;
+        }
+      }
+    }
+    &.message-menu {
+      path {
+        fill: #3e4661;
+      }
+      &:hover {
+        transition: all 0.3s;
+        path {
+          fill: #6e8fff;
+          transition: all 0.3s;
+        }
+      }
+      &.active-link {
+        path {
+          fill: #6e8fff;
+        }
+      }
+    }
+    &.map-menu {
+      path {
+        fill: #8e625e;
+      }
+      &:hover {
+        transition: all 0.3s;
+        path {
+          fill: #E02F21;
+          transition: all 0.3s;
+        }
+      }
+      &.active-link {
+        path {
+          fill: #E02F21;
+        }
+      }
+    }
+    &.token-menu {
+      path{
+        fill:#635A6B;
+      }
+      &:hover {
+        transition: all 0.3s;
+        path {
+          fill: #622894;
+          transition: all 0.3s;
+        }
+      }
+      &.active-link {
+        path {
+          fill: #622894;
+        }
+      }
+    }
+    &.gallery-menu {
+      path{
+        fill: #5A6554;
+      }
+      &:hover {
+        transition: all 0.3s;
+        path {
+          fill: #6EAC4C;
+          transition: all 0.3s;
+        }
+      }
+      &.active-link {
+        path {
+          fill: #6EAC4C;
+        }
+      }
+    }
+  }
+}
+.relative {
+  position: relative;
+}
