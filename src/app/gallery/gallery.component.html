@@ -1,82 +1,28 @@
 <div class="main-wrapper">
-    <app-menu></app-menu>
-    <div class="middle-section">
-        <h2 class="page-title">Gallery</h2>
-        <div class="gallery-outer scrollbar-width">
-            <div class="grid-list">
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/0.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/1.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/2.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/3.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/4.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/5.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/0.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/1.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/2.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/3.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/4.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/5.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/0.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/1.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/2.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/3.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/4.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/5.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/0.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/1.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/2.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/3.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/4.png" class="gallery-img" alt="img">
-                </div>
-                <div class="grid-item animated fadeInDown">
-                    <img src="../../assets/images/5.png" class="gallery-img" alt="img">
-                </div>
-            </div>
+  <app-menu></app-menu>
+  <div class="middle-section">
+    <h2 class="page-title">Gallery</h2>
+    <span *ngIf="infinite | async as people">
+      <div class="gallery-outer scrollbar-width">
+        <div class="grid-list">
+          <div
+            swiperSlide
+            *ngFor="let token of people; let i = index"
+            class="grid-item animated fadeInDown"
+          >
+            <button (click)="openDialog(token.id)" class="img-gallery">
+              <img
+                class="gallery-img"
+                [src]="
+                  'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+                  token.id +
+                  '.png'
+                "
+              />
+            </button>
+          </div>
         </div>
-    </div>
+      </div>
+    </span>
+  </div>
 </div>

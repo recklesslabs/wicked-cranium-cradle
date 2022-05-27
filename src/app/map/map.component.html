@@ -1,20 +1,25 @@
 <div class="main-wrapper">
-    <app-menu></app-menu>
-    <div class="middle-section ">
-        <google-map  
-            height="700px"
-            width="100%"
-            [zoom]="zoom"
-            [center]="center"
-            [options]="options">
-            >
-                <map-marker #marker="mapMarker"
-                    *ngFor="let marker of markers"
-                    [position]="marker.position"
-                    [options]="marker.options"
-                    (mapClick)="openInfoWindow(marker, marker.info)">
-                </map-marker>
-                <map-info-window #infoWindow="mapInfoWindow"> {{ infoContent }}</map-info-window>
-        </google-map>
-    </div>
+  <app-menu></app-menu>
+  <div class="middle-section">
+    <google-map
+      height="700px"
+      width="100%"
+      [zoom]="zoom"
+      [center]="center"
+      [options]="options"
+    >
+      >
+      <map-marker
+        #marker="mapMarker"
+        *ngFor="let marker of markers"
+        [position]="marker.position"
+        [options]="marker.options"
+        (mapClick)="openInfoWindow(marker, marker.info)"
+      >
+      </map-marker>
+      <map-info-window #infoWindow="mapInfoWindow">
+        {{ infoContent }}</map-info-window
+      >
+    </google-map>
+  </div>
 </div>

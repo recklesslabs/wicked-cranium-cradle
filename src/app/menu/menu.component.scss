@@ -20,7 +20,7 @@
     }
     .mat-card-title {
       color: #fff;
-      font-size: 14px;
+      font-size: 16px;
       text-align: center;
       margin: 10px 0 0;
     }
@@ -36,6 +36,10 @@
       align-items: center;
       right: -12px;
       top: 4px;
+      small {
+        padding-top: 5px;
+        font-size: 14px;
+      }
     }
     .menu-img {
       width: 57px;
@@ -52,7 +56,7 @@
     }
 
     &.home-menu {
-      path{
+      path {
         fill: #60593a;
       }
       &:hover {
@@ -92,19 +96,19 @@
       &:hover {
         transition: all 0.3s;
         path {
-          fill: #E02F21;
+          fill: #e02f21;
           transition: all 0.3s;
         }
       }
       &.active-link {
         path {
-          fill: #E02F21;
+          fill: #e02f21;
         }
       }
     }
     &.token-menu {
-      path{
-        fill:#635A6B;
+      path {
+        fill: #635a6b;
       }
       &:hover {
         transition: all 0.3s;
@@ -120,19 +124,19 @@
       }
     }
     &.gallery-menu {
-      path{
-        fill: #5A6554;
+      path {
+        fill: #5a6554;
       }
       &:hover {
         transition: all 0.3s;
         path {
-          fill: #6EAC4C;
+          fill: #6eac4c;
           transition: all 0.3s;
         }
       }
       &.active-link {
         path {
-          fill: #6EAC4C;
+          fill: #6eac4c;
         }
       }
     }
@@ -140,4 +144,11 @@
 }
 .relative {
   position: relative;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }

@@ -1,143 +1,65 @@
 <div class="main-wrapper">
-    <app-menu></app-menu>
-    <div class="middle-section">
-        <h2 class="page-title">Token</h2>
-        <div class="table-wrapper">
-            <table class="table">
-                <thead>
-                    <tr class="animated fadeInDown">
-                        <th></th>
-                        <th>Item</th>
-                        <th class="text-right">Price</th>
-                        <th>Quantity</th>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="animated fadeInDown">
-                        <td>Sale 🛒</td>
-                        <td>
-                            <div class="item-outer">
-                                <div>
-                                    <img src="../../assets/images/item.png" alt="img">
-                                </div>
-                                <div>
-                                    <p>Ape Kids Social Club</p>
-                                    <h5>SHUGARDADDY3</h5>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-right">
-                            <h5>✨ 0.3</h5>
-                            <span>$9.03</span>
-                        </td>
-                        <td class="text-center">1</td>
-                        <td>
-                            A503E1
-                        </td>
-                        <td>FC7106</td>
-                        <td>29 seconds ago</td>
-                    </tr>
-                    <tr class="animated fadeInDown">
-                        <td>Sale 🛒</td>
-                        <td>
-                            <div class="item-outer">
-                                <div>
-                                    <img src="../../assets/images/0.png" alt="img">
-                                </div>
-                                <div>
-                                    <p>Ape Kids Social Club</p>
-                                    <h5>SHUGARDADDY3</h5>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-right">
-                            <h5>✨ 0.3</h5>
-                            <span>$9.03</span>
-                        </td>
-                        <td class="text-center">1</td>
-                        <td>
-                            A503E1
-                        </td>
-                        <td>FC7106</td>
-                        <td>a minute ago</td>
-                    </tr>
-                    <tr class="animated fadeInDown">
-                        <td>Sale 🛒</td>
-                        <td>
-                            <div class="item-outer">
-                                <div>
-                                    <img src="../../assets/images/1.png" alt="img">
-                                </div>
-                                <div>
-                                    <p>Ape Kids Social Club</p>
-                                    <h5>SHUGARDADDY3</h5>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-right">
-                            <h5>✨ 0.3</h5>
-                            <span>$9.03</span>
-                        </td>
-                        <td class="text-center">1</td>
-                        <td>
-                            A503E1
-                        </td>
-                        <td>FC7106</td>
-                        <td>2 minute ago</td>
-                    </tr>
-                    <tr class="animated fadeInDown">
-                        <td>Sale 🛒</td>
-                        <td>
-                            <div class="item-outer">
-                                <div>
-                                    <img src="../../assets/images/2.png" alt="img">
-                                </div>
-                                <div>
-                                    <p>Ape Kids Social Club</p>
-                                    <h5>SHUGARDADDY3</h5>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-right">
-                            <h5>✨ 0.3</h5>
-                            <span>$9.03</span>
-                        </td>
-                        <td class="text-center">1</td>
-                        <td>
-                            A503E1
-                        </td>
-                        <td>FC7106</td>
-                        <td>3 minute ago</td>
-                    </tr>
-                    <tr class="animated fadeInDown">
-                        <td>Sale 🛒</td>
-                        <td>
-                            <div class="item-outer">
-                                <div>
-                                    <img src="../../assets/images/3.png" alt="img">
-                                </div>
-                                <div>
-                                    <p>Ape Kids Social Club</p>
-                                    <h5>SHUGARDADDY3</h5>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-right">
-                            <h5>✨ 0.3</h5>
-                            <span>$9.03</span>
-                        </td>
-                        <td class="text-center">1</td>
-                        <td>
-                            A503E1
-                        </td>
-                        <td>FC7106</td>
-                        <td>6 minute ago</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+  <app-menu></app-menu>
+  <div class="middle-section">
+    <!-- <h2 class="page-title">Token</h2> -->
+    <div class="token-filter-outer">
+      <button class="token-action refresh-token" (click)="tokenInsite()">
+        Refresh
+      </button>
+      <!-- <a href="javascript:void(0)" class="token-action refresh-token">
+        Refresh</a
+      > -->
+      <a href="javascript:void(0)" class="token-action filter-token"> Filter</a>
     </div>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr class="animated fadeInDown">
+            <th>Sold</th>
+            <th class="text-center">NFT</th>
+            <th>Price</th>
+            <th>Seller</th>
+            <th>Buyer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="animated fadeInDown" *ngFor="let data of nftData">
+            <td>
+              {{ data.block_timestamp | amTimeAgo }}
+            </td>
+            <td>
+              <div class="item-outer">
+                <div *ngFor="let dataImg of data.token_ids">
+                  <img
+                    [src]="
+                      'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+                      dataImg +
+                      '.png'
+                    "
+                    alt="img"
+                  />
+                </div>
+                <!-- <div>
+                  <h5>{{ data.block_number }}</h5>
+                </div> -->
+              </div>
+            </td>
+            <td>
+              <div class="ethereum-data">
+                <div class="ethe-icon">
+                  <img src="../../assets/images/Ethereum.png" alt="img" />
+                </div>
+                <h5>{{ data.price / 1000000000000000000 }} ETH</h5>
+              </div>
+            </td>
+            <td>{{ data.seller_address }}</td>
+            <td>{{ data.buyer_address }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="editableCardsContainer">
+    <app-slider-token></app-slider-token>
+  </div>
 </div>

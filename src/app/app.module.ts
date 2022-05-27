@@ -6,39 +6,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClientModule } from '@angular/common/http';
-import { EditDialogComponent } from './edit-dialog.component';
+import { EditDialogComponent } from './dialogs/edit-dialog.component';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { FormsModule } from '@angular/forms';
-import { LinkDialogComponent } from './link-dialog.component';
+import { LinkDialogComponent } from './dialogs/link-dialog.component';
 import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MessageComponent } from './message/message.component';
@@ -49,8 +27,10 @@ import { SliderComponent } from './slider/slider.component';
 import { SwiperModule } from 'swiper/angular';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { TokenComponent } from './token/token.component';
-
-
+import { SliderTokenComponent } from './slider-token/slider-token.component';
+import { MomentModule } from 'ngx-moment';
+import { ImageDialogComponent } from './dialogs/image-dialog/image-dialog.component';
+import { LoaderComponent } from './loader/loader.component';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -64,7 +44,21 @@ const firebaseConfig = {
 };
 
 @NgModule({
-  declarations: [AppComponent, EditDialogComponent, LinkDialogComponent, MenuComponent, MessageComponent, HomeComponent, GalleryComponent, MapComponent, SliderComponent, TokenComponent,],
+  declarations: [
+    AppComponent,
+    EditDialogComponent,
+    LinkDialogComponent,
+    MenuComponent,
+    MessageComponent,
+    HomeComponent,
+    GalleryComponent,
+    MapComponent,
+    SliderComponent,
+    TokenComponent,
+    SliderTokenComponent,
+    ImageDialogComponent,
+    LoaderComponent,
+  ],
   imports: [
     BrowserModule,
     ScrollingModule,
@@ -85,6 +79,7 @@ const firebaseConfig = {
     MatGridListModule,
     MatSlideToggleModule,
     GoogleMapsModule,
+    MomentModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

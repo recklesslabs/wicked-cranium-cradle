@@ -7,16 +7,54 @@ $OldMossGreen: #7b8235;
 $CalPolyPomonaGreen: #26532a;
 $BlackChocolate: #0d280e;
 
+@font-face {
+  font-family: "Friz Quadrata Std";
+  src: url("./assets/fonts/FrizQuadrataStd-Italic.woff2") format("woff2"),
+    url("./assets/fonts/FrizQuadrataStd-Italic.woff") format("woff");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Friz Quadrata Std";
+  src: url("./assets/fonts/FrizQuadrataStd.woff2") format("woff2"),
+    url("./assets/fonts/FrizQuadrataStd.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Friz Quadrata Std";
+  src: url("./assets/fonts/FrizQuadrataStd-Bold.woff2") format("woff2"),
+    url("./assets/fonts/FrizQuadrataStd-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Friz Quadrata Std";
+  src: url("./assets/fonts/FrizQuadrataStd-BoldItalic.woff2") format("woff2"),
+    url("./assets/fonts/FrizQuadrataStd-BoldItalic.woff") format("woff");
+  font-weight: bold;
+  font-style: italic;
+}
+
 html,
 body {
   min-height: 100%;
-  font-family: "Chelsea Market", cursive;
+  // font-family: "Chelsea Market", cursive;
+  font-family: "Friz Quadrata Std" !important;
   color: rgb(255, 255, 255);
   overflow-x: hidden;
 }
 body {
   margin: 0;
   background-color: #141414;
+  line-height: normal;
+}
+
+* {
+  font-family: "Friz Quadrata Std" !important;
 }
 
 .rounded {
@@ -52,6 +90,7 @@ body {
 
 *::-webkit-scrollbar {
   width: 5px !important;
+  height: 5px !important;
 }
 
 *::-webkit-scrollbar-thumb {
@@ -61,7 +100,7 @@ body {
 
 .mat-form-field {
   width: 100%;
-  font-family: "Chelsea Market", cursive;
+  font-family: "Friz Quadrata Std";
 }
 
 .home-add-dialog {
@@ -127,7 +166,7 @@ body {
       margin: 0;
       background: #1e1e1e;
       text-align: center;
-      font-size: 13px;
+      font-size: 15px;
       color: #fff;
       padding: 15px;
       border-radius: 50px;
@@ -149,10 +188,10 @@ body {
         .mat-form-field-label {
           color: #fff;
           font-weight: 500;
-          font-size: 13px;
+          font-size: 16px;
         }
         .mat-form-field-infix {
-          padding: 0.25em 0 0.5em 0;
+          padding: 0.45em 0 0.5em 0;
         }
         input,
         textarea {
@@ -212,10 +251,10 @@ body {
           height: 190px;
           object-fit: cover;
         }
-        &.hide-map{
+        &.hide-map {
           display: none;
         }
-        &.show-map{
+        &.show-map {
           display: block;
         }
       }
@@ -249,10 +288,14 @@ body {
   }
   .mat-slide-toggle {
     margin-top: 20px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     .mat-slide-toggle-bar {
       width: 30px;
+    }
+    .mat-slide-toggle-content {
+      font-size: 16px;
+      font-weight: 500;
     }
     &.mat-checked {
       .mat-slide-toggle-bar {
@@ -336,7 +379,6 @@ body {
 
 /*---------home comment-textarea----*/
 
-
 .home-comment-textarea {
   .mat-form-field {
     width: 100%;
@@ -348,7 +390,7 @@ body {
         border-radius: 10px;
         label {
           color: #9a9a9a;
-          font-size: 14px;
+          font-size: 16px;
         }
         textarea {
           resize: none;
@@ -360,4 +402,79 @@ body {
       display: none;
     }
   }
+}
+
+// Loader css
+.loader {
+  background-color: rgba(0, 0, 0, 0.95);
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  z-index: 99;
+  img {
+    width: 100px;
+    -webkit-animation: mover 0.8s infinite alternate;
+    animation: mover 0.8s infinite alternate;
+  }
+  @-webkit-keyframes mover {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-20px);
+    }
+  }
+  @keyframes mover {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-20px);
+    }
+  }
+  .loading-text {
+    left: 50%;
+    top: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 4.4px;
+    text-transform: capitalize;
+    position: absolute;
+    overflow: hidden;
+    margin-top: 80px;
+    transform: translate(-50%, -60%);
+
+    &:before {
+      color: #444;
+      content: attr(data-loading-text);
+    }
+
+    &:after {
+      top: 0;
+      left: 0;
+      width: 0;
+      opacity: 1;
+      color: #aaa;
+      overflow: hidden;
+      position: absolute;
+      content: attr(data-loading-text);
+      animation: loading 3s infinite;
+    }
+
+    @keyframes loading {
+      0% {
+        width: 0;
+      }
+      100% {
+        width: 100%;
+      }
+    }
+  }
+}
+.cdk-overlay-dark-backdrop {
+  background: rgba(0, 0, 0, 0.8);
 }

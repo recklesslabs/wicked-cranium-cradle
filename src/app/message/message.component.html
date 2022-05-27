@@ -1,18 +1,66 @@
 <div class="main-wrapper">
   <app-menu></app-menu>
   <div class="middle-section">
-    <div class="no-msg-outer animated flipInX">
-      <img
-        src="../../assets/images/0.png"
-        alt="img"
-        class="img-avtar rounded"
-      />
-      <h1>Hi!</h1>
-      <p>
-        You have a new message
-        <img src="../../assets/images/message.svg" alt="img" />
-      </p>
-    </div>
+    <span *ngIf="flag; then ifPart; else elsePart"></span>
+    <ng-template #ifPart>
+      <div class="no-msg-outer animated flipInX">
+        <img
+          src="../../assets/images/0.png"
+          alt="img"
+          class="img-avtar rounded"
+        />
+        <h1>Hi!</h1>
+        <p>
+          You have a new message
+          <img src="../../assets/images/message.svg" alt="img" />
+        </p>
+      </div>
+    </ng-template>
+    <ng-template #elsePart>
+      <div class="chat-outer">
+        <h2 class="page-title">{{ secPerson }}</h2>
+        <div class="chat">
+          <div class="chat__wrapper" *ngFor="let data of dbUsers">
+            <div
+              [ngClass]="
+                data.id === user.id
+                  ? 'message chat__message chat__message-own'
+                  : 'chat__message'
+              "
+            >
+              <span class="name">{{ data.id }} </span>
+              <p>
+                {{ data.message }}
+              </p>
+              <span class="time">{{
+                data.messageTime.toDate() | date: "hh:mm"
+              }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="chat__form">
+          <form id="chat__form">
+            <input
+              type="text"
+              placeholder="Type your message here ..."
+              class="form-control"
+              id="Message"
+              name="Message"
+              [(ngModel)]="user.message"
+            />
+            <button
+              type="submit"
+              mat-raised-button
+              (click)="saveUserMessage()"
+              [disabled]="user.message === ''"
+            >
+              <img src="../../assets/images/send.svg" alt="img" />Send
+            </button>
+          </form>
+        </div>
+        <div id="result"></div>
+      </div>
+    </ng-template>
   </div>
   <div class="right-section border-gray message-right-area">
     <div class="msg-user-list animated flipInX">
@@ -20,21 +68,47 @@
       <mat-list class="list-outer">
         <ul>
           <li>
-            <span class="name active">New_York_cranium</span>
-            <span class="count">2</span>
+            <button
+              class="name"
+              [ngClass]="{
+                active: isActive('0xEDB33Bb89dEFE621F3765EbA582999eEfA26974e')
+              }"
+              (click)="
+                getChats(user.id, '0xEDB33Bb89dEFE621F3765EbA582999eEfA26974e')
+              "
+            >
+              0xEDB33Bb89dEFE621F3765EbA582999eEfA26974e
+            </button>
           </li>
+
           <li>
-            <span class="name">New_York_cranium</span>
-            <span class="count">2</span>
+            <button
+              class="name"
+              [ngClass]="{
+                active: isActive('0xF5B5F9F83fDbA59A84EE197b73A1c98164509189')
+              }"
+              (click)="
+                getChats(user.id, '0xF5B5F9F83fDbA59A84EE197b73A1c98164509189')
+              "
+            >
+              0xF5B5F9F83fDbA59A84EE197b73A1c98164509189
+            </button>
           </li>
+
           <li>
-            <span class="name">New_York_cranium</span>
-            <!-- <span class="count">2</span> -->
+            <button
+              class="name"
+              [ngClass]="{
+                active: isActive('0x8471Aa13684001a9A73962A04967dCbbB6ABD4dF')
+              }"
+              (click)="
+                getChats(user.id, '0x8471Aa13684001a9A73962A04967dCbbB6ABD4dF')
+              "
+            >
+              0x8471Aa13684001a9A73962A04967dCbbB6ABD4dF
+            </button>
           </li>
-          <li>
-            <span class="name">New_York_cranium</span>
-            <!-- <span class="count">2</span> -->
-          </li>
+          <!-- <span class="count">2</span> -->
         </ul>
       </mat-list>
     </div>

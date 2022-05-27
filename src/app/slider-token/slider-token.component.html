@@ -1,0 +1,23 @@
+<ng-container *ngIf="infinite | async as people">
+  <swiper
+    class="animated fadeInRight"
+    [slidesPerView]="5"
+    [direction]="'vertical'"
+    #customSwiper
+  >
+    <ng-template swiperSlide *ngFor="let token of tokens; let i = index">
+      <img
+        (click)="openEditDialog(token)"
+        [src]="
+          'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+          token +
+          '.png'
+        "
+      />
+    </ng-template>
+  </swiper>
+  <div class="swiper-vertical">
+    <button (click)="onBack()" class="button-prev swiper-button-prev"></button>
+    <button (click)="onNext()" class="button-next swiper-button-next"></button>
+  </div>
+</ng-container>

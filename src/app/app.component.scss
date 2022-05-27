@@ -1,6 +1,23 @@
 @import "../styles.scss";
 
-
+.menu-header {
+  display: flex;
+  width: 1024px;
+  margin: 0 auto;
+  align-items: center;
+  .logo {
+    width: 200px;
+    text-align: center;
+    margin: 20px 0 10px 0;
+    img {
+      width: 103px;
+    }
+  }
+  h1 {
+    width: 650px;
+    font-size: 48px;
+  }
+}
 
 .headingStyling {
   text-align: center;
@@ -10,21 +27,37 @@
 }
 footer {
   max-width: 1024px;
-  margin: 50px auto auto;
+  margin: 18px auto auto;
   display: flex;
   align-items: space-around;
   align-content: center;
   justify-content: space-evenly;
   padding: 25px 0;
   font-size: 14px;
-  .item{
-    a{
+  .item {
+    a {
       text-decoration: none;
       color: #fff;
-      &:hover{
+      &:hover {
         color: rgb(138, 138, 138);
         transition: all 0.3s;
       }
     }
+  }
+}
+
+.login-outer {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 230px);
+  align-items: center;
+  justify-content: center;
+  button {
+    background-color: #7b8235;
+    color: #fff;
+    min-width: 150px;
+    padding: 5px;
+    font-size: 20px;
+    text-transform: capitalize;
   }
 }
