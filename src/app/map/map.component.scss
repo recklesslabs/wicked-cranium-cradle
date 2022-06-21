@@ -1,6 +1,7 @@
-.middle-section {
-  width: 812px;
-  margin-right: 0;
-  border-radius: 6px;
-  overflow: hidden;
+.map-middle-outer {
+    width: 100%;
+    #map {
+        border-radius: 8px; 
+    }
 }
+

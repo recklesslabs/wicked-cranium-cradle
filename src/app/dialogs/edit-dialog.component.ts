@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MapInfoWindow, MapMarker, GoogleMap } from '@angular/google-maps';
+// import { MapInfoWindow, MapMarker, GoogleMap } from '@angular/google-maps';
 import { AngularFirestore } from '@angular/fire/firestore';
 
 interface ITokenState {
@@ -107,26 +107,8 @@ const INITIAL_STATE: ITokenState = {
               class="map-area"
               [ngClass]="optInLoc ? 'show-map ' : 'hide-map'"
             >
-              <google-map
-                height="200px"
-                width="100%"
-                [zoom]="zoom"
-                [center]="center"
-                [options]="options"
-                (mapClick)="addLocation($event)"
-              >
-                <map-marker
-                  #somemarker="mapMarker"
-                  *ngFor="let marker of markers"
-                  [position]="marker.position"
-                  [options]="marker.options"
-                  (mapClick)="openInfoWindow(somemarker, marker.info)"
-                >
-                </map-marker>
-                <map-info-window #infoWindow="mapInfoWindow">
-                  {{ infoContent }}</map-info-window
-                >
-              </google-map>
+            <div #mapContainer1 id="map1" style="height: 200px;width: 100%;"></div>
+             
             </div>
           </div>
           <div mat-dialog-actions class="animated fadeInDown">
@@ -139,199 +121,53 @@ const INITIAL_STATE: ITokenState = {
   `,
   styles: [],
 })
-export class EditDialogComponent implements OnInit {
-  @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
-  @ViewChild(MapInfoWindow, { static: false }) infoWindow: MapInfoWindow;
+export class EditDialogComponent implements AfterViewInit {
   public tokenState: ITokenState;
+
+  @ViewChild("mapContainer1", { static: false }) gmap: ElementRef;
+  map: google.maps.Map;
+
+  lat = 0.026843;
+  lng = -4.635703;
+
+  NEW_ZEALAND_BOUNDS = {
+    north: 85.0,
+    south: -85.0,
+    west: -180.0,
+    east: 180.0,
+  };
+
+  coordinates = new google.maps.LatLng(this.lat, this.lng);
+
+  mapOptions: google.maps.MapOptions = {
+    center: this.coordinates,
+    mapTypeId: 'roadmap',
+    zoom: 3,
+    maxZoom: 6,
+    minZoom: 3,
+    zoomControl: false,
+    mapTypeControl: false,
+    streetViewControl: false,
+    disableDoubleClickZoom: false,
+    fullscreenControl: false,
+
+    restriction: {
+      latLngBounds: {
+        north: 64.2,
+        south: -64.3,
+        west: -84.9,
+        east: 84.2,
+      },
+      strictBounds: false,
+    },
+  };
 
   setAsPfp = false;
   optInLoc = false;
 
-  zoom = 2;
-  maxZoom = 20;
-  minZoom = 2;
-  center: google.maps.LatLngLiteral;
-  options: google.maps.MapOptions = {
-    mapTypeId: 'roadmap',
-    mapTypeControl: false,
-    zoomControl: true,
-    gestureHandling: 'cooperative',
-    disableDoubleClickZoom: false,
-    streetViewControl: false,
-    maxZoom: this.maxZoom,
-    minZoom: this.minZoom,
-    styles: [
-      {
-        featureType: 'all',
-        elementType: 'labels.text.fill',
-        stylers: [
-          {
-            saturation: 36,
-          },
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 40,
-          },
-        ],
-      },
-      {
-        featureType: 'all',
-        elementType: 'labels.text.stroke',
-        stylers: [
-          {
-            visibility: 'on',
-          },
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 16,
-          },
-        ],
-      },
-      {
-        featureType: 'all',
-        elementType: 'labels.icon',
-        stylers: [
-          {
-            visibility: 'off',
-          },
-        ],
-      },
-      {
-        featureType: 'administrative',
-        elementType: 'geometry.fill',
-        stylers: [
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 20,
-          },
-        ],
-      },
-      {
-        featureType: 'administrative',
-        elementType: 'geometry.stroke',
-        stylers: [
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 17,
-          },
-          {
-            weight: 1.2,
-          },
-        ],
-      },
-      {
-        featureType: 'landscape',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 20,
-          },
-        ],
-      },
-      {
-        featureType: 'poi',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 21,
-          },
-        ],
-      },
-      {
-        featureType: 'road.highway',
-        elementType: 'geometry.fill',
-        stylers: [
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 17,
-          },
-        ],
-      },
-      {
-        featureType: 'road.highway',
-        elementType: 'geometry.stroke',
-        stylers: [
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 29,
-          },
-          {
-            weight: 0.2,
-          },
-        ],
-      },
-      {
-        featureType: 'road.arterial',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 18,
-          },
-        ],
-      },
-      {
-        featureType: 'road.local',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 16,
-          },
-        ],
-      },
-      {
-        featureType: 'transit',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 19,
-          },
-        ],
-      },
-      {
-        featureType: 'water',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#000000',
-          },
-          {
-            lightness: 17,
-          },
-        ],
-      },
-    ],
-  };
-
-  markers: any = [];
-  infoContent = '';
   tokenData: any = [];
+  tokenLocation: any = [];
+  marker: any;
 
   constructor(
     public dialogRef: MatDialogRef<EditDialogComponent>,
@@ -358,47 +194,116 @@ export class EditDialogComponent implements OnInit {
         }
         this.setAsPfp = data.token.set_as_pfp;
         this.optInLoc = data.token.opt_in_loc;
+        this.tokenLocation = data.token.location;
+
+        this.loadAllMarkers(data.token.location);
       });
+
   }
 
-  ngOnInit(): void {
-    setTimeout(() => {
-      this.addMarker();
-    }, 1000);
+  ngAfterViewInit(): void {
+    this.mapInitializer();
+
+  }
+
+  USGSOverlay = class extends google.maps.OverlayView {
+    private bounds: google.maps.LatLngBounds;
+    private image: string;
+    private div?: HTMLElement;
+
+    constructor(bounds: google.maps.LatLngBounds, image: string) {
+      super();
+
+      this.bounds = bounds;
+      this.image = image;
+    }
+
+    onAdd() {
+      this.div = document.createElement('div');
+      this.div.classList.add("chintan");
+      this.div.style.borderStyle = '0px solid red';
+      this.div.style.borderWidth = '1px';
+      this.div.style.position = 'absolute';
+
+      const img = document.createElement('img');
+
+      img.src = this.image;
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.position = 'absolute';
+      this.div.appendChild(img);
+
+      const panes = this.getPanes()!;
+      panes.overlayLayer.appendChild(this.div);
+    }
+
+    draw() {
+      const overlayProjection = this.getProjection();
+
+      const sw = overlayProjection.fromLatLngToDivPixel(
+        this.bounds.getSouthWest()
+      )!;
+      const ne = overlayProjection.fromLatLngToDivPixel(
+        this.bounds.getNorthEast()
+      )!;
+
+      if (this.div) {
+        this.div.style.left = sw.x + 'px';
+        this.div.style.top = ne.y + 'px';
+        this.div.style.width = ne.x - sw.x + 'px';
+        this.div.style.height = sw.y - ne.y + 'px';
+      }
+    }
+  }
+
+  mapInitializer(): void {
+    this.map = new google.maps.Map(this.gmap.nativeElement, this.mapOptions);
+
+    this.marker = new google.maps.Marker({
+      position: null,
+      map: this.map,
+      icon: '../assets/images/marker.svg',
+      title: "",
+      draggable: true,
+    });
+
+    const bounds = new google.maps.LatLngBounds(
+      new google.maps.LatLng(-180.000000, -85.000000),
+      new google.maps.LatLng(180.000000, 85.000000)
+    );
+
+    let image = '../../assets/images/WC_Map_6.svg';
+
+    const overlay = new this.USGSOverlay(bounds, image);
+    overlay.setMap(this.map);
+
+    this.map.addListener("click", (event: any) => {
+
+      this.dialogRef.componentInstance.data.token.location = JSON.parse(
+        JSON.stringify(event.latLng)
+      );
+
+      this.marker.setPosition(this.dialogRef.componentInstance.data.token.location);
+
+    });
+
+
+    this.marker.addListener("dragend", (event: any) => {
+      this.dialogRef.componentInstance.data.token.location = JSON.parse(
+        JSON.stringify(event.latLng)
+      );
+
+      this.marker.setPosition(this.dialogRef.componentInstance.data.token.location);
+    });
+
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-  public openInfoWindow(marker: MapMarker, content: any) {
-    this.infoContent = content;
-    this.infoWindow.open(marker);
-  }
-
-  addMarker() {
-    var latlong = this.data.token.location;
-    this.markers.push({
-      position: latlong,
-      label: {
-        color: 'black',
-        text: '',
-      },
-      title: '',
-      info: '',
-      options: {
-        animation: google.maps.Animation.BOUNCE,
-        icon: '../assets/images/marker.svg',
-      },
-    });
-  }
-
-  addLocation(event: google.maps.MapMouseEvent) {
-    this.dialogRef.componentInstance.data.token.location = JSON.parse(
-      JSON.stringify(event.latLng)
-    );
-    this.markers = new Array();
-    this.addMarker();
+  loadAllMarkers(location?: any): void {
+    this.marker.setPosition(location);
   }
 
   setAsPfpStatus() {
@@ -408,7 +313,7 @@ export class EditDialogComponent implements OnInit {
   optInLocStatus() {
     this.data.token.opt_in_loc = this.optInLoc;
     if (!this.data.token.opt_in_loc) {
-      this.data.token.location = { lat: 0, lng: 0 };
+      this.data.token.location = 0;
     }
   }
 }

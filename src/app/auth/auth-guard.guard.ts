@@ -1,23 +1,32 @@
 import { Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
-import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { ContractService } from '../services/contract.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuardGuard implements CanActivate {
   constructor(
-    public authService: AuthService,
-    private route: Router,
-    private router: Router
+    private router: Router,
+    public contractService: ContractService
   ) {}
 
   async canActivate(): Promise<boolean> {
-    if (await this.authService.setTokens()) {
-      return true;
+    var walletData: any = localStorage.getItem('walletData');
+
+    if (walletData != null) {
+      var jsonObj: any = JSON.parse(walletData);
+
+      let getTokensRes = this.contractService.decryptObj(
+        jsonObj.WCtoken,
+        jsonObj.address
+      );
+
+      if (getTokensRes.tokens.length) {
+        return true;
+      }
     }
-    this.router.navigate(['/login'], { queryParams: { returnUrl: 'abc' } });
     return false;
   }
 }

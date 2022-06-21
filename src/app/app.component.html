@@ -8,7 +8,7 @@
 </header>
 
 <router-outlet></router-outlet>
-<span *ngIf="isLogin == false; then loginDiv"></span>
+<span *ngIf="tokens.length == 0; then loginDiv"></span>
 <ng-template #loginDiv>
   <div class="login-outer">
     <button mat-raised-button (click)="login()">

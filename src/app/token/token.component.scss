@@ -1,7 +1,7 @@
 .middle-section {
   // width: 812px;
   .page-title {
-    padding: 15px 25px;
+    padding: 15px;
     font-weight: normal;
     font-size: 22px;
     margin: 0;
@@ -9,7 +9,7 @@
     border-bottom: 1px solid #3e3e3e;
   }
   .token-filter-outer {
-    padding: 15px 25px;
+    padding: 15px;
     display: flex;
     justify-content: space-between;
     .token-action {
@@ -62,7 +62,12 @@
       border-spacing: 0;
       border-collapse: collapse;
       // border: 1px solid #3e3e3e;
-
+      thead {
+        position: sticky;
+        top: -1px;
+        z-index: 99;
+        background-color: #141414;
+      }
       tr {
         th {
           font-size: 16px;
@@ -107,7 +112,7 @@
               height: 55px;
               border-radius: 4px;
               object-fit: cover;
-              margin-right: 10px;
+              // margin-right: 10px;
             }
             p {
               margin: 0;
@@ -175,4 +180,98 @@
   margin: 0px !important;
   background-color: #141414;
   position: relative;
+}
+
+.loader-td {
+  border-bottom: 0 !important;
+}
+// token loader css
+.token-loader {
+  display: flex;
+  flex-direction: column;
+  height: 550px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+  z-index: 98;
+  img {
+    width: 80px;
+    -webkit-animation: mover 0.8s infinite alternate;
+    animation: mover 0.8s infinite alternate;
+  }
+  @-webkit-keyframes mover {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-20px);
+    }
+  }
+  @keyframes mover {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-20px);
+    }
+  }
+  .loading-text {
+    left: 50%;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 4.4px;
+    text-transform: capitalize;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 0;
+    width: inherit;
+    overflow: hidden;
+    margin-top: 25px;
+    transform: translate(-50%, -50%);
+
+    &:before {
+      color: #444;
+      content: attr(data-loading-text);
+    }
+
+    &:after {
+      top: 0px;
+      left: 40.5%;
+      width: 0;
+      opacity: 1;
+      color: #aaa;
+      overflow: hidden;
+      position: absolute;
+      content: attr(data-loading-text);
+      animation: loading 3s infinite;
+    }
+
+    @keyframes loading {
+      0% {
+        width: 0;
+      }
+      100% {
+        width: 100%;
+      }
+    }
+  }
+}
+.cdk-overlay-dark-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.token-price {
+  width: 140px;
+  max-width: 140px;
+}
+.token-sold {
+  width: 96px;
+  max-width: 96px;
+}
+.token-nft {
+  width: 72px;
+  max-width: 72px;
 }

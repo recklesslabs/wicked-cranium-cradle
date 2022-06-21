@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  ViewChild,
+} from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { SwiperComponent } from 'swiper/angular';
@@ -7,6 +13,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { map, mergeMap, scan, tap, throttleTime } from 'rxjs/operators';
 import { ContractService } from '../services/contract.service';
+import { GlobleService } from '../services/globle.service';
 
 @Component({
   selector: 'app-slider-token',
@@ -15,6 +22,8 @@ import { ContractService } from '../services/contract.service';
 })
 export class SliderTokenComponent implements OnInit {
   @ViewChild('customSwiper', { static: false }) customSwiper: SwiperComponent;
+  @ViewChild(CdkVirtualScrollViewport) viewport?: CdkVirtualScrollViewport;
+  @Output() newItemEvent = new EventEmitter<string>();
 
   onBack() {
     this.customSwiper.swiperRef.slidePrev();
@@ -23,8 +32,6 @@ export class SliderTokenComponent implements OnInit {
   onNext() {
     this.customSwiper.swiperRef.slideNext();
   }
-  @ViewChild(CdkVirtualScrollViewport)
-  viewport?: CdkVirtualScrollViewport;
 
   batch = 10;
   theEnd = false;
@@ -32,13 +39,14 @@ export class SliderTokenComponent implements OnInit {
   offset = new BehaviorSubject(null);
   infinite: Observable<any[]>;
   userToken: string = '';
-
+  pfpToken: any;
   direction: string[] | undefined;
 
   constructor(
     public dialog: MatDialog,
     public db: AngularFirestore,
-    public contractService: ContractService
+    public contractService: ContractService,
+    public globleService: GlobleService
   ) {
     const batchMap = this.offset.pipe(
       throttleTime(500),
@@ -48,45 +56,44 @@ export class SliderTokenComponent implements OnInit {
       }, {})
     );
 
-    this.userToken = localStorage.getItem('tokens') as string;
-
-    if (this.userToken) {
-      for (let token of this.userToken.split(',')) {
-        this.tokens.push(Number(token));
-      }
-    }
+    var walletData: any = localStorage.getItem('walletData');
+    var jsonObj: any = JSON.parse(walletData);
+    var tokenObj = this.contractService.decryptObj(
+      jsonObj.WCtoken,
+      jsonObj.address
+    );
+    this.tokens = tokenObj.tokens;
 
     this.infinite = batchMap.pipe(map((v) => Object.values(v)));
+    this.pfpData();
   }
   title = 'virtual-scroll';
 
   pk: string = '';
   ngOnInit(): void {}
 
-  setPfpFalse(): any {
-    this.db
-      .collection('tokenidtodata')
-      .ref.where('set_as_pfp', '==', true)
-      .get()
-      .then((docs) => {
-        docs.forEach(function (doc: any) {
-          doc.ref.update({
-            set_as_pfp: false,
+  async pfpData() {
+    this.pfpToken = await this.globleService.getCurrentPFP();
+  }
+
+  async setPfpFalse(): Promise<any> {
+    if (this.pfpToken) {
+      this.db
+        .collection('tokenidtodata')
+        .ref.where('id', '==', this.pfpToken)
+        .get()
+        .then((docs) => {
+          docs.forEach(function (doc: any) {
+            doc.ref.update({
+              set_as_pfp: false,
+            });
           });
         });
-      });
+    }
+  }
 
-    // this.db
-    //   .collection('tokenidtodata')
-    //   .get()
-    //   .toPromise()
-    //   .then((querySnapshot: any) => {
-    //     querySnapshot.forEach(function (doc: any) {
-    //       doc.ref.update({
-    //         set_as_pfp: false,
-    //       });
-    //     });
-    //   });
+  tokenInfo(pfpData: any) {
+    this.newItemEvent.emit(pfpData);
   }
 
   openEditDialog(token: number) {
@@ -104,6 +111,7 @@ export class SliderTokenComponent implements OnInit {
     if (typeof token === 'object') {
       param = token;
     }
+
     const dialogRef = this.dialog.open(EditDialogComponent, {
       data: {
         pk: this.pk,
@@ -115,10 +123,12 @@ export class SliderTokenComponent implements OnInit {
       if (result) {
         if (result.token.set_as_pfp) {
           this.setPfpFalse();
+          this.pfpToken = result.token;
         }
+        this.tokenInfo(result.token.id);
         this.db
           .collection('tokenidtodata')
-          .ref.where('id', '==', result.token.id)
+          .ref.where('id', '==', result.token)
           .get()
           .then(({ docs }) => {
             if (docs.length == 0) {

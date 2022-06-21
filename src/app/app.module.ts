@@ -21,9 +21,8 @@ import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MessageComponent } from './message/message.component';
 import { HomeComponent } from './home/home.component';
-import { GalleryComponent } from './gallery/gallery.component';
+import { StoriesComponent } from './stories/stories.component';
 import { MapComponent } from './map/map.component';
-import { SliderComponent } from './slider/slider.component';
 import { SwiperModule } from 'swiper/angular';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { TokenComponent } from './token/token.component';
@@ -31,6 +30,8 @@ import { SliderTokenComponent } from './slider-token/slider-token.component';
 import { MomentModule } from 'ngx-moment';
 import { ImageDialogComponent } from './dialogs/image-dialog/image-dialog.component';
 import { LoaderComponent } from './loader/loader.component';
+import { StoreModule } from '@ngrx/store';
+import { AddressReducer } from './store/reducers/address.reducer';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -51,9 +52,8 @@ const firebaseConfig = {
     MenuComponent,
     MessageComponent,
     HomeComponent,
-    GalleryComponent,
+    StoriesComponent,
     MapComponent,
-    SliderComponent,
     TokenComponent,
     SliderTokenComponent,
     ImageDialogComponent,
@@ -80,8 +80,9 @@ const firebaseConfig = {
     MatSlideToggleModule,
     GoogleMapsModule,
     MomentModule,
+    StoreModule.forRoot({ walletState: AddressReducer }),
   ],
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

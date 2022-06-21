@@ -1,35 +1,33 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ContractService } from '../services/contract.service';
-import { EditDialogComponent } from '../dialogs/edit-dialog.component';
 import { AngularFirestore } from '@angular/fire/firestore';
 import firebase from 'firebase/app';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap, scan, mergeMap, throttleTime } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { SwiperComponent } from 'swiper/angular';
-import SwiperCore, { Navigation } from 'swiper';
-import { PostService } from '../services/post.service';
-import { AuthService } from '../services/auth.service';
+import SwiperCore, { Navigation, SwiperOptions } from 'swiper';
+import { GlobleService } from '../services/globle.service';
 import { CommentService } from '../services/comment.service';
+import { testnetAbi, testnetContract } from '../constants';
+import Moralis from 'moralis';
 
 SwiperCore.use([Navigation]);
 
-export interface UserPosts {
-  meta_add: string;
-  postMessage: any;
-  postTime: any;
-}
+declare var Web3: any;
+declare var window: any;
 
 export interface UserComments {
   meta_add: string;
   commentMessage: string;
   commentTime: string;
+  tokenId: string;
+  perentCmtId: '';
   subComment: [
     {
       meta_add: string;
       subCommnetMessage: string;
       subCommentTime: string;
+      commentTo: string;
     }
   ];
 }
@@ -41,139 +39,101 @@ export interface UserComments {
 })
 export class HomeComponent {
   @ViewChild('customSwiper', { static: false }) customSwiper: SwiperComponent;
+  @ViewChild(CdkVirtualScrollViewport) viewport?: CdkVirtualScrollViewport;
 
   title = 'virtual-scroll';
   pk: string = '';
-  tokens: number[] = [];
+  getTokens: any;
   DbRef: any;
   DbCmtRef: any;
   dbUsersImage: any;
-  dbPosts: any;
   dbComments: any;
-  batch = 10;
-  theEnd = false;
-  offset = new BehaviorSubject(null);
-  infinite: Observable<any[]>;
-  post_replay: boolean = false;
+  allComment: any;
+  allSubComment: any;
+  pfpToken: any;
+  totalComments: number;
   cmt_replay: boolean = false;
   subCmt_replay: boolean = false;
-  postReplayInputId: any;
   cmtReplayInputId: any;
   subCmtReplayInputId: any;
+  userCmtReplay: any = '';
+  userSubCmtReplay: any = '';
+  tokensArr: any;
+  tokensObj: any;
+  tokensArrObj: any[] = [];
+  sliderTokenId: number | 0;
 
-  userPost: any = {
-    meta_add: '',
-    postMessage: '',
-    postTime: firebase.firestore.FieldValue.serverTimestamp(),
+  config: SwiperOptions = {
+    // initialSlide: this.sliderTokenId,
+    initialSlide: 0,
+    slidesPerView: 1,
+    spaceBetween: 20,
+    navigation: true
   };
 
-  subComments: any = {
+  userSubComment: any = {
     meta_add: '',
     subCommnetMessage: '',
     subCommentTime: firebase.firestore.Timestamp.now(),
+    commentTo: '',
+    perentCmtId: '',
   };
 
   userComment: any = {
-    perentCmtId: '',
     meta_add: '',
+    token_Id: '',
     commentMessage: '',
     commentTime: firebase.firestore.FieldValue.serverTimestamp(),
     subComment: [],
   };
 
-  @ViewChild(CdkVirtualScrollViewport)
-  viewport?: CdkVirtualScrollViewport;
-
   constructor(
-    public contractService: ContractService,
-    public dialog: MatDialog,
     public db: AngularFirestore,
-    public postService: PostService,
-    public authService: AuthService,
-    public commentService: CommentService
+    public contractService: ContractService,
+    public commentService: CommentService,
+    public globleService: GlobleService
   ) {
-    this.setPfp();
-    this.getImages();
-    this.getPosts();
+    // this.getAddress();
+    this.pfpData();
     this.getComments();
-    this.getAddress();
-
-    const batchMap = this.offset.pipe(
-      throttleTime(500),
-      mergeMap((n) => contractService.getTokenImg(n)),
-      scan((acc, batch) => {
-        return { ...acc, ...batch };
-      }, {})
-    );
-
-    this.infinite = batchMap.pipe(map((v) => Object.values(v)));
+    var accoutData = this.contractService.getAccoutData();
+    this.tokensArr = accoutData.tokens;
+    this.tokenDataObj();
   }
 
-  allInputClose(): void {
-    this.post_replay = false;
-    this.cmt_replay = false;
-    this.subCmt_replay = false;
-  }
-
-  postReplay(id: any): boolean {
-    this.postReplayInputId = id;
-    this.allInputClose();
-    return (this.post_replay = true);
-  }
-
-  canclePostReplay(): boolean {
-    return (this.post_replay = false);
-  }
-
-  cmtReplay(id: any): boolean {
-    this.allInputClose();
-    this.cmtReplayInputId = id;
-    return (this.cmt_replay = true);
-  }
-
-  cancleCmtReplay(): boolean {
-    return (this.cmt_replay = false);
-  }
-
-  subCmtReplay(id: any): boolean {
-    this.allInputClose();
-    this.subCmtReplayInputId = id;
-    return (this.subCmt_replay = true);
-  }
-
-  cancleSubCmtReplay(): boolean {
-    return (this.subCmt_replay = false);
-  }
-
-  getAddress = async () => {
-    var accAddress = await this.authService.getLoggedIn();
-    this.userPost.meta_add = accAddress[0];
-    this.userComment.meta_add = accAddress[0];
-    this.subComments.meta_add = accAddress[0];
-  };
-
-  getPosts(): void {
-    this.postService
-      .getAll()
-      .snapshotChanges()
-      .pipe(
-        map((changes: any) =>
-          changes.map((c: any) => ({
-            id: c.payload.doc.id,
-            ...c.payload.doc.data(),
-          }))
-        )
-      )
-      .subscribe((data: object) => {
-        this.dbPosts = data;
+  tokenDataObj() {
+    this.db
+      .collection('tokenidtodata')
+      .ref.where('id', 'in', this.tokensArr)
+      .get()
+      .then((res) => {
+        res.docs.map((doc: any) => {
+          this.tokensObj = doc.data();
+          this.tokensArrObj.push(doc.data());
+        });
       });
   }
 
-  savePost(): void {
-    this.postService.create(this.userPost).then(() => {
-      this.userPost.postMessage = '';
-      this.allInputClose();
-    });
+  tokenData(tData: any) {
+    this.pfpToken = tData;
+    this.getComments();
+  }
+
+  async pfpData() {
+    this.pfpToken = await this.globleService.getCurrentPFP();
+    this.sliderTokenId = Number(
+      this.tokensArrObj.findIndex((x) => x.id === this.pfpToken)
+    );
+  }
+
+  async otherUserData(walletAddr: any) {
+    var pfpTokenData = await this.globleService.globalTokensData(walletAddr);
+    return pfpTokenData;
+  }
+
+  allInputClose(): void {
+    this.cmt_replay = false;
+    this.subCmt_replay = false;
   }
 
   getComments(): void {
@@ -188,100 +148,93 @@ export class HomeComponent {
           }))
         )
       )
-      .subscribe((data: object) => {
+      .subscribe(async (data: object) => {
         this.dbComments = data;
+        this.allComment = await Promise.all(
+          this.dbComments.map(async (commentData: any) => {
+            const { id: documentId } = commentData;
+            return {
+              ...commentData,
+              ...(await this.otherUserData(commentData.meta_add)),
+              documentId: documentId,
+            };
+          })
+        );
+        this.dbComments = this.allComment;
+        this.allSubComment = await Promise.all(
+          this.dbComments.map(async (sub: any) => {
+            return await Promise.all(
+              sub.subComment.map(async (subCommentData: any) => {
+                const { id: tokenId, name: userName } =
+                  await this.otherUserData(subCommentData.meta_add);
+                var nameOfComment;
+                if (subCommentData.commentTo) {
+                  var commentToObj = await this.otherUserData(
+                    subCommentData.commentTo
+                  );
+                  nameOfComment = '@' + commentToObj.name;
+                }
+                return {
+                  ...subCommentData,
+                  ...(await this.otherUserData(subCommentData.meta_add)),
+                  nameOfComment: nameOfComment,
+                  tokenId: tokenId,
+                  userName: userName,
+                };
+              })
+            );
+          })
+        );
+        this.dbComments.map((d: any) => {
+          return (d.subComment = this.allSubComment.flat(2));
+        });
+        this.totalComments = this.dbComments.length;
       });
   }
 
-  saveUserComment(pid: any, cid: any): void {
-    this.userComment.perentCmtId = pid;
+  saveComment(tId: any): void {
+    this.userComment.token_Id = tId;
     this.commentService.create(this.userComment).then(() => {
       this.userComment.commentMessage = '';
       this.allInputClose();
     });
   }
 
-  subComment(cid: any, pid: any): void {
-    this.userComment.perentCmtId = pid;
-    // firebase.database().ref('/userComment').push(this.subCmt);
+  saveSubComment(docId: any, commentTo: string) {
+    this.userSubComment.perentCmtId = docId;
+    this.userSubComment.commentTo = commentTo;
     this.DbCmtRef = this.db
       .collection('comments')
-      .doc(cid)
+      .doc(docId)
       .update({
-        subComment: firebase.firestore.FieldValue.arrayUnion(this.subComments),
+        subComment: firebase.firestore.FieldValue.arrayUnion(
+          this.userSubComment
+        ),
       });
-    this.subComments.subCommnetMessage = '';
+    this.userSubComment.subCommnetMessage = '';
     this.allInputClose();
   }
 
-  getProducts(products_ids: number[]) {
-    var queryId = firebase.firestore.FieldPath.documentId();
-    this.db
-      .collection('tokenidtodata')
-      .ref.where(queryId, 'in', products_ids)
-      .get()
-      .then(({ docs }) => {
-        console.log(docs.map((doc) => doc.data()));
-      });
+  cmtReplay(id: any, name: string): boolean {
+    this.cmtReplayInputId = id;
+    this.userCmtReplay = name;
+    this.userSubComment.commentTo = '';
+    this.allInputClose();
+    return (this.cmt_replay = true);
   }
 
-  nextBatch(e: any, offset: any) {
-    if (this.theEnd) {
-      return;
-    }
-    const end = (this.viewport as CdkVirtualScrollViewport).getRenderedRange()
-      .end;
-    const total = (this.viewport as CdkVirtualScrollViewport).getDataLength();
-    if (end === total) {
-      this.offset.next(offset);
-    }
+  cancleCmtReplay(): boolean {
+    return (this.cmt_replay = false);
   }
 
-  trackByIdx(i: any) {
-    return i;
+  subCmtReplay(id: any, name: string) {
+    this.subCmtReplayInputId = id;
+    this.userSubCmtReplay = name;
+    this.allInputClose();
+    return (this.subCmt_replay = true);
   }
 
-  getAll(): any {
-    return this.DbRef;
-  }
-
-  setPfp() {
-    this.DbRef = this.db.collection('tokenidtodata', (ref) =>
-      ref.where('set_as_pfp', '==', true)
-    );
-  }
-
-  getImages() {
-    this.getAll()
-      .snapshotChanges()
-      .pipe(
-        map((changes: any) =>
-          changes.map((c: any) => ({
-            id: c.payload.doc.id,
-            ...c.payload.doc.data(),
-          }))
-        )
-      )
-      .subscribe((data: object) => {
-        this.dbUsersImage = data;
-      });
-  }
-
-  openEditDialog(token: number) {
-    let param = {
-      bio: '',
-      id: token,
-      link: '',
-      name: '',
-    };
-    if (typeof token === 'object') {
-      param = token;
-    }
-    const dialogRef = this.dialog.open(EditDialogComponent, {
-      data: {
-        pk: this.pk,
-        token: param,
-      },
-    });
+  cancleSubCmtReplay(): boolean {
+    return (this.subCmt_replay = false);
   }
 }

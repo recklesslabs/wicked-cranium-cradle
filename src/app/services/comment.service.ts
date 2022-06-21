@@ -19,10 +19,9 @@ export class CommentService {
   }
 
   comment(): any {
-    this.DbRef = this.db.collection('comments');
-    //   this.DbRef = this.db.collection('comments', (ref) =>
-    //   ref.orderBy('commentTime', 'desc')
-    // );
+      this.DbRef = this.db.collection('comments', (ref) =>
+      ref.orderBy('commentTime', 'desc')
+    );
   }
 
   getAll(): any {

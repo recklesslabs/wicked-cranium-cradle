@@ -7,7 +7,6 @@ import {
   NavigationStart,
   Router,
 } from '@angular/router';
-import { AuthService } from './services/auth.service';
 import { ContractService } from '../app/services/contract.service';
 
 @Component({
@@ -17,66 +16,43 @@ import { ContractService } from '../app/services/contract.service';
 })
 export class AppComponent implements OnInit {
   loading = false;
-  constructor(
-    public contractService: ContractService,
-    public authService: AuthService,
-    public db: AngularFirestore,
-    private router: Router
-  ) {
-    // this.chkLogin();
-    // this.userToken = localStorage.getItem("tokens") as string;
-    // if(this.userToken){
-    //   for (let token of this.userToken.split(',')) {
-    //     this.tokens.push(Number(token));
-    //   }
-    // }
-    this.router.events.subscribe((event: any) => {
-      switch (true) {
-        case event instanceof NavigationStart: {
-          this.loading = true;
-          break;
-        }
-
-        case event instanceof NavigationEnd:
-        case event instanceof NavigationCancel:
-        case event instanceof NavigationError: {
-          setTimeout(() => {
-            this.loading = false;
-          }, 2000);
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    });
-  }
-
   pk: string = '';
   tokens: number[] = [];
   message = 'login with metamask!';
-  NftTokens = localStorage.getItem('tokens');
   userToken: string = '';
-  isLogin: boolean = false;
-  loader: boolean = true;
+  getTokens: any;
 
-  ngOnInit(): void {}
+  constructor(
+    public contractService: ContractService,
+    public db: AngularFirestore,
+    private router: Router
+  ) {
+    var walletData: any = localStorage.getItem('walletData');
+    if (walletData != null) {
+      var jsonObj: any = JSON.parse(walletData);
+      this.getTokens = this.contractService.decryptObj(
+        jsonObj.WCtoken,
+        jsonObj.address
+      );
+      if (this.getTokens.tokens.length == 0) {
+        this.message = 'Could not find Wicked Craniums in your Metamask';
+      } else {
+        this.tokens = this.getTokens.tokens;
+      }
+    }
 
-  // async chkLogin() {
-  //   let getTokensRes = await this.authService.setTokens();
-  //   if (getTokensRes) {
-  //     this.message = 'logging in...';
-  //     this.tokens = getTokensRes.tokens;
-  //   }else{
-  //     localStorage.clear();
-  //   }
-  // }
+
+    this.contractService.isLoading.subscribe((value: any) => {
+      this.loading = value;
+    });
+  }
+
+  ngOnInit(): void { }
 
   async login() {
     this.message = 'logging in...';
     let getTokensRes = await this.contractService.getTokens();
     if (getTokensRes) {
-      this.isLogin = true;
       this.tokens = getTokensRes.tokens;
       const isValid = getTokensRes.tokens.length > 0;
       localStorage.setItem(
@@ -86,9 +62,7 @@ export class AppComponent implements OnInit {
       if (isValid) {
         this.pk = getTokensRes.pk;
         this.createUser(getTokensRes.tokens, getTokensRes.pk);
-        this.router.navigateByUrl('/home').then(() => {
-          // window.location.reload();
-        });
+        this.router.navigateByUrl('/home');
         return true;
       } else {
         this.message = 'Could not find Wicked Craniums in your Metamask';

@@ -1,316 +1,68 @@
+<!-- <app-loader *ngIf="loading"></app-loader> -->
+
 <div class="cardsContainer">
   <app-menu></app-menu>
-
-  <!---middle-profile-card-->
   <div class="middle-section middle-profile-outer">
-    <ng-container>
-      <mat-card class="home-top-card animated lightSpeedIn">
-        <div class="profile-box" *ngFor="let pfp of dbUsersImage">
-          <img
-            class="home-profile-img"
-            [src]="
-              'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
-              pfp.id +
-              '.png'
-            "
-            alt="img"
-          />
-          <h3 class="user-id-name">{{ pfp.name }}</h3>
-        </div>
-        <div class="home-comment-textarea animated lightSpeedIn">
-          <mat-form-field appearance="fill" class="animated fadeInDown">
-            <mat-label>Create a post...</mat-label>
-            <textarea
-              rows="5"
-              cols="80"
-              placeholder=""
-              matInput
-              [(ngModel)]="userPost.postMessage"
-            ></textarea>
-          </mat-form-field>
-          <button
-            class="post-btn"
-            mat-raised-button
-            (click)="savePost()"
-            [disabled]="userPost.postMessage === ''"
-          >
-            <span>Leave a Post</span>
-          </button>
-        </div>
-      </mat-card>
-
-      <!-- <mat-card class="animated lightSpeedIn" style="display: none">
-        <div class="profile-social">
-          <div class="location">
-            <span>Location</span>
-            <div class="img-round">
-              <img src="../../assets/images/map-ic-gray.svg" />
-            </div>
-          </div>
-          <div class="location">
-            <span>Share</span>
-            <div class="img-round">
-              <img src="../../assets/images/twitter.svg" />
-            </div>
-            <div class="img-round">
-              <img src="../../assets/images/discord.svg" />
-            </div>
-          </div>
-          <div class="location">
-            <div class="img-round bg-trasparent">
-              <img src="../../assets/images/comment.png" />
-            </div>
-            <span>5 Comment</span>
-          </div>
-        </div>
-      </mat-card> -->
-
-      <mat-card class="home-comment-wrapper animated lightSpeedIn">
-        <h4>Posts</h4>
-        <div class="comment-outer">
-          <ul class="comment-list" *ngFor="let pfp of dbUsersImage">
-            <li *ngFor="let post of dbPosts; index as postReplayIndex">
-              <div class="avtar">
-                <img
-                  class="avtar"
-                  [src]="
+    <swiper class="animated lightSpeedIn home-pfp-slider" [config]="config">
+      <ng-template *ngFor="let token of tokensArrObj" swiperSlide>
+        <mat-card class="home-top-card animated lightSpeedIn">
+          <div class="profile-box" *ngIf="pfpToken">
+            <img class="home-profile-img" [src]="
                     'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
-                    pfp.id +
-                    '.png'
-                  "
-                  alt="img"
-                />
-              </div>
-              <div class="user-name">{{ pfp.name }}</div>
-              <div class="description">{{ post.postMessage }}</div>
-              <button
-                class="post-replay-btn d-none"
-                mat-raised-button
-                (click)="postReplay(postReplayIndex)"
-              >
-                <span>Replay</span>
-              </button>
-              <span *ngIf="post_replay; then yesPostReplay"></span>
-              <ng-template #yesPostReplay>
-                <div
-                  class="replay-box-outer animated fadeInDown"
-                  *ngIf="postReplayInputId === postReplayIndex"
-                >
-                  <input
-                    placeholder="Leave a replay"
-                    matInput
-                    [(ngModel)]="userComment.commentMessage"
-                  />
-
-                  <div class="btn-box">
-                    <button
-                      class="post-send-btn"
-                      mat-raised-button
-                      (click)="saveUserComment(post.id, null)"
-                      [disabled]="userComment.commentMessage === ''"
-                    >
-                      <span>Post</span>
-                    </button>
-                    <button
-                      class="post-cancel-btn"
-                      mat-raised-button
-                      (click)="canclePostReplay()"
-                    >
-                      <span>Cancel</span>
-                    </button>
-                  </div>
-                </div>
-              </ng-template>
-              <ul
-                class="comment-list"
-                *ngFor="let comment of dbComments; index as cmtReplayIndex"
-              >
-                <span *ngIf="post.id == comment.perentCmtId; then cmt"></span>
-                <ng-template #cmt>
-                  <li>
-                    <div class="avtar">
-                      <img
-                        class="avtar"
-                        [src]="
-                          'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
-                          pfp.id +
-                          '.png'
-                        "
-                        alt="img"
-                      />
-                    </div>
-                    <div class="user-name">{{ pfp.name }}</div>
-                    <div class="description">
-                      {{ comment.commentMessage }}
-                    </div>
-                    <button
-                      class="post-replay-btn d-none"
-                      mat-raised-button
-                      (click)="cmtReplay(cmtReplayIndex)"
-                    >
-                      <span>Replay</span>
-                    </button>
-
-                    <span *ngIf="cmt_replay; then yesReplay"></span>
-                    <ng-template #yesReplay>
-                      <div
-                        class="replay-box-outer animated fadeInDown"
-                        *ngIf="cmtReplayInputId === cmtReplayIndex"
-                      >
-                        <input
-                          placeholder="Leave a replay"
-                          matInput
-                          [(ngModel)]="subComments.subCommnetMessage"
-                        />
-                        <div class="btn-box">
-                          <button
-                            class="post-send-btn"
-                            mat-raised-button
-                            (click)="subComment(comment.id, post.id)"
-                          >
-                            <span>Post</span>
-                          </button>
-                          <button
-                            class="post-cancel-btn"
-                            mat-raised-button
-                            (click)="cancleCmtReplay()"
-                          >
-                            <span>Cancel</span>
-                          </button>
-                        </div>
-                      </div>
-                    </ng-template>
-                    <ul
-                      class="comment-list"
-                      *ngFor="let subComt of comment.subComment;
-                        index as subCmtReplayIndex">
-                      <li>
-                        <img
-                          class="avtar"
-                          [src]="
-                            'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
-                            pfp.id +
-                            '.png'
-                          "
-                          alt="img"
-                        />
-                        <div class="user-name">
-                          {{ pfp.name }}
-                        </div>
-                        <div class="description">
-                          {{ subComt.subCommnetMessage }}
-                        </div>
-                        <div class="commnet-info"></div>
-                        <button
-                          class="post-replay-btn d-none"
-                          mat-raised-button
-                          style="margin: 10px 0 0 0px"
-                          (click)="subCmtReplay(subCmtReplayIndex)"
-                        >
-                          <span>Replay</span>
-                        </button>
-
-                        <span *ngIf="subCmt_replay; then yesSubReplay"></span>
-                        <ng-template #yesSubReplay>
-                          <div
-                            class="replay-box-outer animated fadeInDown"
-                            *ngIf="subCmtReplayInputId === subCmtReplayIndex"
-                          >
-                            <input
-                              placeholder="Leave a replay"
-                              matInput
-                              [(ngModel)]="subComments.subCommnetMessage"
-                            />
-                            <div class="btn-box">
-                              <button
-                                class="post-send-btn"
-                                mat-raised-button
-                                (click)="subComment(comment.id, post.id)"
-                              >
-                                <span>Post</span>
-                              </button>
-                              <button
-                                class="post-cancel-btn"
-                                mat-raised-button
-                                (click)="cancleSubCmtReplay()"
-                              >
-                                <span>Cancel</span>
-                              </button>
-                            </div>
-                          </div>
-                        </ng-template>
-                      </li>
-                    </ul>
-                  </li>
-                </ng-template>
-              </ul>
-            </li>
-          </ul>
-        </div>
-        <!-- <h5 class="show-more-replie">5 more replies</h5> -->
-      </mat-card>
-    </ng-container>
-  </div>
-  <!---end--middle-profile-card-->
-
-  <!-- <div class="displayCardsContainer" style="display: none">
-    <ng-container *ngIf="infinite | async as people">
-      <cdk-virtual-scroll-viewport
-        itemSize="160"
-        (scrolledIndexChange)="nextBatch($event, people[people.length - 1].id)"
-      >
-        <mat-card
-          (click)="openEditDialog(p)"
-          *cdkVirtualFor="let p of people; let i = index; trackBy: trackByIdx"
-          style="padding: 0px"
-          class="animated lightSpeedIn"
-        >
-          <div style="display: flex">
-            <div style="width: 130px">
-              <img
-                height="130"
-                width="130"
-                [src]="
-                  'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
-                  p.id +
-                  '.png'
-                "
-              />
+                    token.id + '.png'" alt="img" />
+            <h3 class="user-id-name">{{ token.name }}</h3>
+          </div>
+          <div class="home-comment-top-form animated lightSpeedIn">
+            <div class="form-group">
+              <label>Name</label>
+              <p>{{ token.name }}</p>
             </div>
-            <div style="width: 330px; padding: 7px">
-              <h4
-                style="
-                  cursor: pointer;
-                  margin: 0px;
-                  font-family: 'Friz Quadrata Std';
-                  width: 510px;
-                "
-              >
-                {{ p.id }} — {{ p.name }}
-              </h4>
-              <p
-                style="
-                  font-family: 'Friz Quadrata Std';
-                  margin: 5px;
-                  margin-top: 7px;
-                  width: 510px;
-                  height: 90px;
-                  min-height: 90px;
-                  overflow: auto;
-                "
-              >
-                {{ p.bio }}
+
+            <div class="form-group">
+              <label>Story</label>
+              <p class="story-area">
+                {{ token.bio }}
               </p>
+            </div>
+
+            <div class="profile-social">
+              <div class="location">
+                <span>Location</span>
+                <div class="img-round">
+                  <img src="../../assets/images/home-location-ic.svg" />
+                </div>
+              </div>
+              <div class="location">
+                <span>Share</span>
+                <div class="img-round">
+                  <img src="../../assets/images/home-twitter-ic.svg" />
+                </div>
+                <div class="img-round">
+                  <img src="../../assets/images/home-discord-ic.svg" />
+                </div>
+              </div>
             </div>
           </div>
         </mat-card>
 
-        <p *ngIf="theEnd">That's the end of it!</p>
-      </cdk-virtual-scroll-viewport>
-    </ng-container>
-  </div> -->
+        <mat-card class="home-comment-textarea animated lightSpeedIn">
+          <mat-form-field appearance="fill" class="animated fadeInDown">
+            <mat-label>Write a comment...</mat-label>
+            <textarea rows="3" cols="80" placeholder="" matInput [(ngModel)]="userComment.commentMessage">
+                </textarea>
+          </mat-form-field>
+          <div class="leav-comment-btn-outer">
+            <button class="post-send-btn" mat-raised-button>
+              <span>Leave a comment</span>
+            </button>
+          </div>
+        </mat-card>
+      </ng-template>
+    </swiper>
+  </div>
 
   <div class="editableCardsContainer">
-    <app-slider-token></app-slider-token>
+    <app-slider-token (newItemEvent)="tokenData($event)"> </app-slider-token>
   </div>
+
 </div>
