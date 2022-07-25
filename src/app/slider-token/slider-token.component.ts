@@ -1,19 +1,14 @@
-import {
-  Component,
-  OnInit,
-  Output,
-  EventEmitter,
-  ViewChild,
-} from '@angular/core';
+import { SwiperComponent } from 'swiper/angular';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, mergeMap, scan, throttleTime } from 'rxjs/operators';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
-import { SwiperComponent } from 'swiper/angular';
-import { EditDialogComponent } from '../dialogs/edit-dialog.component';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { map, mergeMap, scan, tap, throttleTime } from 'rxjs/operators';
+import { EditDialogComponent } from '../dialogs/edit-dialog.component';
 import { ContractService } from '../services/contract.service';
-import { GlobleService } from '../services/globle.service';
+import { GlobalService } from '../services/global.service';
 
 @Component({
   selector: 'app-slider-token',
@@ -23,7 +18,7 @@ import { GlobleService } from '../services/globle.service';
 export class SliderTokenComponent implements OnInit {
   @ViewChild('customSwiper', { static: false }) customSwiper: SwiperComponent;
   @ViewChild(CdkVirtualScrollViewport) viewport?: CdkVirtualScrollViewport;
-  @Output() newItemEvent = new EventEmitter<string>();
+  @Output('tokenDataObj') tokenDataObj: EventEmitter<any> = new EventEmitter();
 
   onBack() {
     this.customSwiper.swiperRef.slidePrev();
@@ -34,11 +29,9 @@ export class SliderTokenComponent implements OnInit {
   }
 
   batch = 10;
-  theEnd = false;
   tokens: number[] = [];
   offset = new BehaviorSubject(null);
   infinite: Observable<any[]>;
-  userToken: string = '';
   pfpToken: any;
   direction: string[] | undefined;
 
@@ -46,7 +39,8 @@ export class SliderTokenComponent implements OnInit {
     public dialog: MatDialog,
     public db: AngularFirestore,
     public contractService: ContractService,
-    public globleService: GlobleService
+    public globalService: GlobalService,
+    private route: ActivatedRoute
   ) {
     const batchMap = this.offset.pipe(
       throttleTime(500),
@@ -73,11 +67,11 @@ export class SliderTokenComponent implements OnInit {
   ngOnInit(): void {}
 
   async pfpData() {
-    this.pfpToken = await this.globleService.getCurrentPFP();
+    this.pfpToken = await this.globalService.getCurrentPFP();
   }
 
   async setPfpFalse(): Promise<any> {
-    if (this.pfpToken) {
+    if (this.pfpToken != undefined) {
       this.db
         .collection('tokenidtodata')
         .ref.where('id', '==', this.pfpToken)
@@ -92,11 +86,8 @@ export class SliderTokenComponent implements OnInit {
     }
   }
 
-  tokenInfo(pfpData: any) {
-    this.newItemEvent.emit(pfpData);
-  }
-
   openEditDialog(token: number) {
+    this.pfpData()
     let param = {
       id: token,
       name: '',
@@ -121,14 +112,14 @@ export class SliderTokenComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        if (result.token.set_as_pfp) {
+        if (result.token.set_as_pfp != undefined) {
           this.setPfpFalse();
-          this.pfpToken = result.token;
+          this.pfpToken = result.token.id;
         }
-        this.tokenInfo(result.token.id);
+       
         this.db
           .collection('tokenidtodata')
-          .ref.where('id', '==', result.token)
+          .ref.where('id', '==', result.token.id)
           .get()
           .then(({ docs }) => {
             if (docs.length == 0) {
@@ -160,6 +151,10 @@ export class SliderTokenComponent implements OnInit {
                   opt_in_loc: result.token.opt_in_loc,
                   location: result.token.location,
                 });
+            }
+            if (!this.route.snapshot.paramMap.get('token') || !this.route.snapshot.paramMap.get('tokenAddr')) 
+            {
+              this.tokenDataObj.emit();
             }
           });
       }

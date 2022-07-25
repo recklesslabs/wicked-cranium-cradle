@@ -1,6 +1,6 @@
+import { ethers } from 'ethers';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { ethers } from 'ethers';
 import { testnetAbi, testnetContract } from '../constants';
 
 declare var Web3: any;

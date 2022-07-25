@@ -1,10 +1,10 @@
-<router-outlet></router-outlet>
+<!-- <router-outlet></router-outlet> -->
 
 <div class="menu-section">
   <button
     mat-button
     class="menu-card animated lightSpeedIn home-menu"
-    routerLink="/home"
+    routerLink="/profile"
     routerLinkActive="active-link"
   >
     <div class="menu-inner">
@@ -22,13 +22,13 @@
           fill="#3b3b3b"
         />
       </svg>
-      <mat-card-title>Home</mat-card-title>
+      <mat-card-title>Profile</mat-card-title>
     </div>
   </button>
   <button
     mat-button
     class="menu-card animated lightSpeedIn message-menu"
-    routerLink="/message"
+    routerLink="/messages"
     routerLinkActive="active-link"
   >
     <div class="relative menu-inner">
@@ -46,10 +46,10 @@
           fill="#3b3b3b"
         />
       </svg>
-      <!-- <span class="msg-badge" matBadge="4" color="danger" matBadgeSize="large">
-        <small>4</small>
-      </span> -->
-      <mat-card-title>Message</mat-card-title>
+      <span *ngIf="messageCount != 0" class="msg-badge" matBadge="4" color="danger" matBadgeSize="large">
+        <small>{{ messageCount }}</small>
+      </span>
+      <mat-card-title>Messages</mat-card-title>
     </div>
   </button>
   <button
@@ -88,7 +88,7 @@
   <button
     mat-button
     class="menu-card animated lightSpeedIn token-menu"
-    routerLink="/token"
+    routerLink="/trades"
     routerLinkActive="active-link"
   >
     <div class="menu-inner">
@@ -108,7 +108,7 @@
         />
       </svg>
 
-      <mat-card-title>Token Insights</mat-card-title>
+      <mat-card-title>Trades</mat-card-title>
     </div>
   </button>
   <button

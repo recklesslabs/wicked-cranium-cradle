@@ -1,47 +1,73 @@
-<div class="main-wrapper">
-  <app-menu></app-menu>
-  <div class="middle-section">
+<div class="page-outer">
+  <div class="middle-section message-outer-box">
     <span *ngIf="flag; then ifPart; else elsePart"></span>
     <ng-template #ifPart>
-      <div class="no-msg-outer animated flipInX">
-        <img src="../../assets/images/message-ic-gray.svg" alt="img" class="img-avtar" />
+      <div class="no-msg-outer animated zoomIn">
+        <img src="../../assets/images/message-ic-gray.svg"
+          alt="img"
+          class="img-avtar"/>
         <h1>Hi!</h1>
         <p>
-          You have a new message{{ secPerson }}
-          <img src="../../assets/images/message.svg" alt="img" />
+          A Fun New Way To Communicate<img src="../../assets/images/message.svg" alt="img" />
         </p>
       </div>
     </ng-template>
     <ng-template #elsePart>
       <div class="chat-outer">
-        <h2 class="page-title">Messages</h2>
+        <span *ngIf="messageTitle; then titlePart; else messagePart"></span>
+        <ng-template  #messagePart>
+          <h2 class="page-title" style="padding: 15px;">
+            Messages
+          </h2>
+        </ng-template>
+        <ng-template #titlePart>
+        <h2 class="page-title" (click)="openProfile(recevier_pfp)">
+          <div class="user-name-img">
+            <img
+              class="home-profile-img"
+              [src]="'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+              recevier_pfp + '.png'" alt="img"/>
+              <span>{{ recevier_name }}</span>
+          </div>
+        </h2>
+      </ng-template>
         <div class="chat">
-          <div class="chat__wrapper" *ngFor="let data of dbUsers">
-            <div [ngClass]="
-                data.id === user.id
+          <div class="chat__wrapper" *ngFor="let data of dbMessages">
+            <div
+              [ngClass]="
+                data.receiver_id === message.id
                   ? 'message chat__message chat__message-own'
                   : 'chat__message'">
-              <span class="name">{{ data.id }} </span>
+              <span class="name" (click)="openProfile(data.id)">{{ data.name }}</span>
               <p>
                 {{ data.message }}
               </p>
-              <span class="time">{{
-                data.messageTime.toDate() | date: "hh:mm"
-                }}</span>
+              <span class="time">
+                {{ data.messageTime.toDate() | date: "hh:mm" }}</span>
             </div>
           </div>
         </div>
         <div class="chat__form">
           <form id="chat__form">
-            <input type="text" placeholder="Type your message here ..." class="form-control" id="Message" name="Message"
-              [(ngModel)]="user.message" />
-            <button type="submit" mat-raised-button (click)="saveUserMessage()" [disabled]="user.message === ''">
+            <input
+              type="text"
+              placeholder="Type your message here ..."
+              class="form-control"
+              id="Message"
+              name="Message"
+              autocomplete="off"
+              [(ngModel)]="message.message"
+              (keydown)="restrictSpace($event)"/>
+            <button
+              type="submit"
+              mat-raised-button
+              (click)="saveUserMessage()"
+              [disabled]="message.message === ''">
               <img src="../../assets/images/send.svg" alt="img" />
               Send
             </button>
           </form>
         </div>
-        <div id="result"></div>
       </div>
     </ng-template>
   </div>
@@ -49,14 +75,22 @@
     <div class="msg-user-list animated flipInX">
       <p class="msg-title">Message</p>
       <mat-list class="list-outer">
-        <ul *ngFor="let dbUser of dbUserName">
-          <li>
-            <button class="name" (click)="getChats(user.id, dbUser.receiver_add)">
-              {{ dbUser.name }}
+        <ul>
+          <li *ngFor="let dbUser of dbUserName">
+            <button
+              class="name"
+              (click)="getChats(message.id, dbUser.address)"
+              [ngClass]="{ active: isActive(dbUser.address) }">
+              <div class="user-name-img">
+                <img
+                  class="home-profile-img"
+                  [src]="'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+                    dbUser.id + '.png'" alt="img"/>
+                   <span>{{ dbUser.name }}</span>
+                <small class="count" *ngIf="dbUser.unreadCount != 0">{{  dbUser.unreadCount }}</small>
+              </div>
             </button>
-
           </li>
-          <!-- <span class="count">2</span> -->
         </ul>
       </mat-list>
     </div>

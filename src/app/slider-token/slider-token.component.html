@@ -1,10 +1,9 @@
-<ng-container *ngIf="infinite | async as people">
+<ng-container>
   <swiper
     class="token-slider animated fadeInRight"
     [slidesPerView]="5"
     [direction]="'vertical'"
-    #customSwiper
-  >
+    #customSwiper>
     <ng-template swiperSlide *ngFor="let token of tokens; let i = index">
       <img
         (click)="openEditDialog(token)"

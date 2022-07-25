@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatCardModule } from '@angular/material/card';
@@ -16,47 +15,45 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { FormsModule } from '@angular/forms';
-import { LinkDialogComponent } from './dialogs/link-dialog.component';
+import { GoogleMapsModule } from '@angular/google-maps';
+import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MessageComponent } from './message/message.component';
-import { HomeComponent } from './home/home.component';
+import { ProfileComponent } from './profile/profile.component';
 import { StoriesComponent } from './stories/stories.component';
 import { MapComponent } from './map/map.component';
 import { SwiperModule } from 'swiper/angular';
-import { GoogleMapsModule } from '@angular/google-maps';
-import { TokenComponent } from './token/token.component';
+import { TradesComponent } from './trades/trades.component';
 import { SliderTokenComponent } from './slider-token/slider-token.component';
 import { MomentModule } from 'ngx-moment';
-import { ImageDialogComponent } from './dialogs/image-dialog/image-dialog.component';
 import { LoaderComponent } from './loader/loader.component';
 import { StoreModule } from '@ngrx/store';
 import { AddressReducer } from './store/reducers/address.reducer';
+import { environment } from '../environments/environment';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: 'AIzaSyDbrLIaFZomlneiEN1YM7wYrEaTHUPbdVU',
-  authDomain: 'wicked-cranium-cradle-testnet.firebaseapp.com',
-  projectId: 'wicked-cranium-cradle-testnet',
-  storageBucket: 'wicked-cranium-cradle-testnet.appspot.com',
-  messagingSenderId: '663270172205',
-  appId: '1:663270172205:web:8cccbcd3813fbd9c413aa4',
-  measurementId: 'G-VX5S4D5QW0',
+  apiKey: environment.apiKey,
+  authDomain: environment.authDomain,
+  projectId: environment.projectId,
+  storageBucket: environment.storageBucket,
+  messagingSenderId: environment.messagingSenderId,
+  appId: environment.appId,
+  measurementId: environment.measurementId,
 };
 
 @NgModule({
   declarations: [
     AppComponent,
     EditDialogComponent,
-    LinkDialogComponent,
     MenuComponent,
     MessageComponent,
-    HomeComponent,
+    ProfileComponent,
     StoriesComponent,
     MapComponent,
-    TokenComponent,
+    TradesComponent,
     SliderTokenComponent,
-    ImageDialogComponent,
     LoaderComponent,
   ],
   imports: [
@@ -85,4 +82,4 @@ const firebaseConfig = {
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

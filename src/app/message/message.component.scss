@@ -1,5 +1,10 @@
 @import "../../styles.scss";
 
+
+.message-outer-box{
+  width: 613px;
+}
+
 .no-msg-outer {
   display: flex;
   flex-direction: column;
@@ -25,13 +30,14 @@
 }
 .message-right-area {
   .msg-user-list {
-    width: 300px;
     .msg-title {
       border-bottom: 1px solid $DarkSilver;
       padding: 15px 10px;
       margin: 0;
+      padding-top: 20px;
     }
     .list-outer {
+      padding-top: 0;
       ul {
         list-style: none;
         padding: 0;
@@ -42,7 +48,6 @@
           justify-content: space-between;
           align-items: center;
           cursor: pointer;
-          margin: 8px 0;
           transition: all 0.3s;
           &:hover {
             .name {
@@ -55,23 +60,25 @@
             font-size: 14px;
             text-overflow: ellipsis;
             overflow: hidden;
-            max-width: 80%;
+            max-width: 100%;
             transition: all 0.3s;
             background: transparent;
             border: 0;
-            width: 80%;
+            width: 100%;
+            cursor: pointer;
             text-align: left;
             &.active {
               color: #fff;
             }
           }
+
           .count {
             background: #e02f21;
-            width: 25px;
-            height: 20px;
+            width: 40px;
+            height: 15px;
             padding-top: 5px;
             border-radius: 50px;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -85,12 +92,23 @@
 
 .chat-outer {
   .page-title {
-    padding: 15px 25px;
+    padding: 1px 15px;
     font-weight: normal;
     font-size: 20px;
     margin: 0;
-    padding-bottom: 8px;
+    padding-bottom: 5px;
     border-bottom: 1px solid #3e3e3e;
+    cursor: pointer;
+    .user-name-img {
+      img {
+        height: 45px;
+        width: 45px;
+        margin: 4px 12px 0 0;
+      }
+      span{
+        padding-top: 10px;
+      }
+    }
   }
   * {
     padding: 0;
@@ -105,7 +123,7 @@
   .chat {
     width: 100%;
     max-width: 800px;
-    height: 590px;
+    height: 585px;
     min-height: 100%;
     padding: 15px;
     margin: 0 auto;
@@ -143,6 +161,7 @@
         margin-bottom: 4px !important;
         display: block;
         font-size: 14px;
+        cursor: pointer;
       }
       p {
         color: #fff;
@@ -161,6 +180,7 @@
         .name {
           color: #5bf9ff;
           text-align: right;
+          cursor: pointer;
         }
         .time {
           right: 10px;
@@ -208,9 +228,9 @@
       justify-content: center;
       align-items: center;
       padding-top: 6px;
-      &:disabled{
-        opacity:0.5;
-        &:hover{
+      &:disabled {
+        opacity: 0.5;
+        &:hover {
           cursor: not-allowed;
         }
       }
@@ -220,5 +240,23 @@
         margin-bottom: 6px;
       }
     }
+  }
+}
+
+.user-name-img {
+  display: flex;
+  align-items: center;
+  img {
+    height: 35px;
+    width: 35px;
+    border-radius: 50px;
+    margin-right: 10px;
+  }
+  span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-top: 5px;
+    min-width: 71%;
   }
 }

@@ -1,7 +1,11 @@
 .map-middle-outer {
-    width: 100%;
-    #map {
-        border-radius: 8px; 
-    }
-}
+  width: 875px;
+  #map {
+    border-radius: 8px;
 
+    img[style*="width: 29px;"] {
+      animation: bounce2 2s ease infinite;
+      border: 2px solid red;
+    }
+  }
+}

@@ -1,6 +1,5 @@
-<div class="main-wrapper">
-  <app-menu></app-menu>
-  <div class="middle-section">
+<div class="page-outer">
+  <div class="middle-section token-page-outer">
     <div class="token-filter-outer">
       <button class="token-action refresh-token" (click)="tokenInsite()">
         Refresh
@@ -13,8 +12,8 @@
             <th class="token-sold">Sold</th>
             <th class="text-center token-nft">NFT</th>
             <th class="token-price">Price</th>
-            <th>Seller</th>
-            <th>Buyer</th>
+            <th >Seller</th>
+            <th >Buyer</th>
           </tr>
         </thead>
 
@@ -38,11 +37,8 @@
               <td class="token-nft">
                 <div class="item-outer">
                   <div *ngFor="let dataImg of data.token_ids">
-                    <img [src]="
-                        'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
-                        dataImg +
-                        '.png'
-                      " alt="img" />
+                    <img [src]="'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+                        dataImg + '.png'" alt="img"/>
                   </div>
                 </div>
               </td>

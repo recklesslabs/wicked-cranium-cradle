@@ -1,15 +1,17 @@
-import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
 import Web3Modal from 'web3modal';
-import WalletConnectProvider from '@walletconnect/web3-provider'; // this profile wallet handler
 import { ethers } from 'ethers';
-import { testnetAbi, testnetContract } from '../constants';
-import { map, tap } from 'rxjs/operators';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { Store } from '@ngrx/store';
-import { onConnect } from '../store/actions/address.actions';
 import CryptoJS from 'crypto-js';
+import { map, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { Store } from '@ngrx/store';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { AngularFirestore } from '@angular/fire/firestore';
+import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { onConnect } from '../store/actions/address.actions';
+import { testnetAbi, testnetContract } from '../constants';
+import { environment } from '../../environments/environment';
 
 declare var Web3: any;
 declare var window: any;
@@ -44,9 +46,9 @@ export class ContractService {
   decryptData: any;
   isLoading = new Subject<boolean>();
   accountTokens = new Subject<object>();
+  message = new Subject<string>();
 
   web3Inst: any;
-
 
   constructor(
     public db: AngularFirestore,
@@ -57,13 +59,21 @@ export class ContractService {
       walletconnect: {
         package: WalletConnectProvider,
         options: {
-          infuraId: 'c37015d1cf314796a9deb27aecf601d8',
+          infuraId: environment.infuraId,
+        },
+      },
+      coinbasewallet: {
+        display: {
+          description: 'Scan qrcode with your mobile wallet',
+        },
+        package: CoinbaseWalletSDK,
+        options: {
+          infuraId: environment.infuraId,
         },
       },
     };
 
     this.web3Modal = new Web3Modal({
-      network: 'rinkeby',
       cacheProvider: true,
       providerOptions,
       theme: {
@@ -93,16 +103,12 @@ export class ContractService {
     if (this.web3Modal.cachedProvider) {
       this.connectAccount();
     }
-
   }
 
   getAccoutData() {
     var walletData: any = localStorage.getItem('walletData');
     var jsonObj: any = JSON.parse(walletData);
-    var tokenObj = this.decryptObj(
-      jsonObj.WCtoken,
-      jsonObj.address
-    );
+    var tokenObj = this.decryptObj(jsonObj.WCtoken, jsonObj.address);
     return tokenObj;
   }
 
@@ -115,30 +121,34 @@ export class ContractService {
   }
 
   async connectAccount() {
-    const instance = await this.web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(instance);
+    try {
+      const instance = await this.web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(instance);
 
-    await this.subscribeProvider(instance);
-    await instance.enable();
+      await this.subscribeProvider(instance);
+      await instance.enable();
 
-    const web3: any = initWeb3(instance);
-    const accounts = await web3.eth.getAccounts();
-    const address = accounts[0];
-    const networkId = await web3.eth.net.getId();
-    const chainId = await web3.eth.chainId();
+      const web3: any = initWeb3(instance);
+      const accounts = await web3.eth.getAccounts();
+      const address = accounts[0];
+      const networkId = await web3.eth.net.getId();
+      const chainId = await web3.eth.chainId();
 
-    this.web3Inst = instance;
+      this.web3Inst = instance;
 
-    let param = {
-      connected: true,
-      address: address,
-      chainId: chainId,
-      networkId: networkId,
-      tokens: '',
-    };
+      let param = {
+        connected: true,
+        address: address,
+        chainId: chainId,
+        networkId: networkId,
+        tokens: '',
+      };
 
-    this.store.dispatch(onConnect({ content: param })); //sent data to reducer
-    return accounts;
+      this.store.dispatch(onConnect({ content: param })); //sent data to reducer
+      return accounts;
+    } catch (err) {
+      this.message.next('login with metamask!');
+    }
   }
 
   encryptObj(globalObj: any, key: any) {
@@ -154,26 +164,86 @@ export class ContractService {
       this.decryptData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
       return this.decryptData;
     } catch (e) {
-      this.logout();
+      this.handleDisconnect();
     }
   }
 
-  logout() {
-    localStorage.clear();
-  }
+  walletEventsFunction = async (
+    provider?: any,
+    account?: any,
+    chainId?: any
+  ) => {
+    const web3: any = initWeb3(provider);
+    const accountsArr = await web3.eth.getAccounts();
+    const address = accountsArr[0];
+    const networkId = await web3.eth.net.getId();
+    const newchainId = await web3.eth.chainId();
 
-  handleAccountsChanged = async (provider: any, account: object) => {
+    var accountData = this.getAccoutData();
 
-    if (Object.keys(account).length > 0) {
+    if (accountData.address == address) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: web3.utils.toHex(chainId) }],
+        });
 
+        this.isLoading.next(true);
+
+        let param = {
+          connected: true,
+          address: address,
+          chainId: chainId,
+          networkId: networkId,
+          tokens: '',
+        };
+
+        this.store.dispatch(onConnect({ content: null }));
+        this.store.dispatch(onConnect({ content: param }));
+
+        var getTokensRes = await this.getTokens();
+        if (getTokensRes) {
+          var tokens = getTokensRes.tokens;
+
+          if (tokens.length > 0) {
+            this.accountTokens.next(tokens);
+
+            this.router.navigate(['/profile']).then(() => {
+              window.location.reload();
+            });
+          } else {
+            this.router.navigate(['/']).then(() => window.location.reload());
+          }
+        } else {
+          this.router.navigate(['/']).then(() => window.location.reload());
+        }
+
+        setTimeout(() => {
+          this.isLoading.next(false);
+        }, 2000);
+      } catch (err: any) {
+        console.log(err);
+        // This error code indicates that the chain has not been added to MetaMask
+        if (err.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainName: 'Polygon Mainnet',
+                chainId: web3.utils.toHex(chainId),
+                nativeCurrency: {
+                  name: 'MATIC',
+                  decimals: 18,
+                  symbol: 'MATIC',
+                },
+                rpcUrls: ['https://polygon-rpc.com/'],
+              },
+            ],
+          });
+        }
+      }
+    } else {
       this.isLoading.next(true);
-
-      const web3: any = initWeb3(provider);
-      const accountsArr = await web3.eth.getAccounts();
-      const address = accountsArr[0];
-      const networkId = await web3.eth.net.getId();
-      const chainId = await web3.eth.chainId();
-
       let param = {
         connected: true,
         address: address,
@@ -191,9 +261,9 @@ export class ContractService {
 
         if (tokens.length > 0) {
           this.accountTokens.next(tokens);
-          this.router
-            .navigateByUrl('/', { skipLocationChange: false })
-            .then(() => this.router.navigate(['/home']));
+          this.router.navigate(['/profile']).then(() => {
+            window.location.reload();
+          });
         } else {
           this.router.navigate(['/']).then(() => window.location.reload());
         }
@@ -201,60 +271,33 @@ export class ContractService {
         this.router.navigate(['/']).then(() => window.location.reload());
       }
 
-      this.isLoading.next(false);
-    } else {
-      this.handleDisconnect(provider);
+      setTimeout(() => {
+        this.isLoading.next(false);
+      }, 2000);
     }
-
   };
 
-  handleChainChanged = async (provider: any) => {
-    this.isLoading.next(true);
-
-    const web3: any = initWeb3(provider);
-    const accountsArr = await web3.eth.getAccounts();
-    const address = accountsArr[0];
-    const networkId = await web3.eth.net.getId();
-    const chain = await web3.eth.chainId();
-
-    let param = {
-      connected: true,
-      address: address,
-      chainId: chain,
-      networkId: networkId,
-      tokens: '',
-    };
-
-    this.store.dispatch(onConnect({ content: null }));
-    this.store.dispatch(onConnect({ content: param }));
-
-    var getTokensRes = await this.getTokens();
-
-    if (getTokensRes) {
-      var tokens = getTokensRes.tokens;
-
-      if (tokens.length > 0) {
-        this.accountTokens.next(tokens);
-        this.router
-          .navigateByUrl('/', { skipLocationChange: false })
-          .then(() => this.router.navigate(['/home']));
-      } else {
-        this.router.navigate(['/']).then(() => window.location.reload());
-      }
+  handleAccountsChanged = async (provider: any, account: object) => {
+    if (Object.keys(account).length > 0) {
+      this.walletEventsFunction(provider, account, null);
     } else {
-      this.router.navigate(['/']).then(() => window.location.reload());
+      this.handleDisconnect();
     }
-    this.isLoading.next(false);
+  };
 
-  }
-  handleDisconnect = async (provider: any) => {
+  handleChainChanged = async (provider: any, chain: number) => {
+    this.walletEventsFunction(provider, null, chain);
+  };
+  handleDisconnect = async () => {
     this.isLoading.next(true);
     this.web3Modal.clearCachedProvider();
     this.store.dispatch(onConnect({ content: null }));
     localStorage.clear();
     this.router.navigate(['/']).then(() => window.location.reload());
-    this.isLoading.next(false);
-  }
+    setTimeout(() => {
+      this.isLoading.next(false);
+    }, 2000);
+  };
 
   public subscribeProvider = async (provider: any) => {
     if (!provider.on) {
@@ -265,14 +308,13 @@ export class ContractService {
       this.handleAccountsChanged(provider, account);
     });
 
-    provider.on('chainChanged', () => {
-      this.handleChainChanged(provider);
+    provider.on('chainChanged', (chainId: number) => {
+      this.handleChainChanged(provider, chainId);
     });
 
     provider.on('disconnect', () => {
-      this.handleDisconnect(provider);
+      this.handleDisconnect();
     });
-
   };
 
   public getTokens = async (address?: string) => {
@@ -290,8 +332,9 @@ export class ContractService {
 
       window.contract = await new web3.eth.Contract(
         testnetAbi,
-        testnetContract,
+        testnetContract
       );
+
       try {
         const res = await window.ethereum.request({
           method: 'eth_call',
@@ -337,7 +380,6 @@ export class ContractService {
           WCtoken: cipherData,
         };
         localStorage.setItem('walletData', JSON.stringify(walletObj));
-
         return { tokens: data, pk: walletAddress };
       } catch (error) {
         console.log(error);
@@ -351,8 +393,7 @@ export class ContractService {
   getTokenImg(offset: any) {
     return this.db
       .collection('tokenidtodata', (ref) =>
-        ref.orderBy('id').startAfter(offset).limit(this.batch)
-      )
+        ref.orderBy('id').startAfter(offset).limit(this.batch))
       .snapshotChanges()
       .pipe(
         tap((arr) => (arr.length ? null : (this.theEnd = true))),

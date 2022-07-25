@@ -1,22 +1,21 @@
+import firebase from 'firebase/app';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import firebase from 'firebase/app';
 import { ContractService } from './contract.service';
-import Moralis from 'moralis';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GlobleService {
-  dbPosts: any;
-  pktotokenid: any;
+export class GlobalService {
   constructor(
     public db: AngularFirestore,
-    public contractService: ContractService
+    public contractService: ContractService,
+    public tokenService: TokenService
   ) {
   }
 
-  /** * Get tokens form firebase  */
+  /** * Get tokens form firebase (Temp)*/
   async globalTokens(walletAddr: any): Promise<any> {
     var pktotokenid = await this.db
       .collection('pktotokenid')
@@ -32,7 +31,7 @@ export class GlobleService {
     return pktotokenid;
   }
 
-  /** *  Get token (who has pfp true) data from firebase  */
+  /** *  Get token (who has pfp true) data from firebase  (Temp) */
   async globalTokensData(walletAddr: any): Promise<any> {
     var globalData = await this.globalTokens(walletAddr);
     return await this.db
@@ -50,6 +49,26 @@ export class GlobleService {
           return tokenData;
         });
         return idData[0];
+      });
+  }
+
+  /** *  Get token data from firebase  (Temp) */
+  async getDataOtherAddr(walletAddr: any): Promise<any> {
+    var globalData = await this.globalTokens(walletAddr);
+    return await this.db
+      .collection('tokenidtodata')
+      .ref.where(
+        firebase.firestore.FieldPath.documentId(),
+        'in',
+        globalData.tokenIds.join().split(',') // compare array to array (Doc id and a simple array)
+      )
+      .get()
+      .then(({ docs }) => {
+        var idData = docs.map((doc) => {
+          var tokenData = doc.data();
+          return tokenData;
+        });
+        return idData;
       });
   }
 
@@ -94,14 +113,36 @@ export class GlobleService {
         'in',
         dataObj.tokens.join().split(',')
       )
-      .where('set_as_pfp', '==', true)
       .get()
       .then(({ docs }) => {
         var idData = docs.map((doc) => {
           var tokenData = doc.data();
           return tokenData;
         });
-        return idData[0];
+        return idData;
+      });
+  }
+
+  async getGlobalProfile(address: any) {
+    var otherUserTokens: any = await this.tokenService.getTokenFromAddress(address);
+    var tokenArr: any[] = [];
+    otherUserTokens.result.map((t: any) => {
+      tokenArr.push(t.token_id);
+    });
+    return await this.db
+      .collection('tokenidtodata')
+      .ref.where(
+        firebase.firestore.FieldPath.documentId(),
+        'in',
+        tokenArr.join().split(',')
+      )
+      .get()
+      .then(({ docs }) => {
+        var otherTokenData = docs.map((doc) => {
+          var tokenData = doc.data();
+          return tokenData;
+        });
+        return otherTokenData;
       });
   }
 }

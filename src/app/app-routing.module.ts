@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MessageComponent } from './message/message.component';
-import { HomeComponent } from './home/home.component';
-// import { GalleryComponent } from './gallery/gallery.component';
+import { ProfileComponent } from './profile/profile.component';
 import { MapComponent } from './map/map.component';
-// import { SliderComponent } from './slider/slider.component';
-import { TokenComponent } from './token/token.component';
+import { TradesComponent } from './trades/trades.component';
 import { AuthService } from './services/auth.service';
-import { AuthGuardGuard } from './auth/auth-guard.guard';
+import { AuthGuard } from './auth/auth.guard';
 import { StoriesComponent } from './stories/stories.component';
 
 const routes: Routes = [
@@ -17,30 +15,44 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'home',
-    component: HomeComponent,
-    canActivate: [AuthGuardGuard],
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [AuthGuard],
   },
   {
-    path: 'message',
+    path: 'profile/:token/:tokenAddr',
+    component: ProfileComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'messages',
     component: MessageComponent,
-    canActivate: [AuthGuardGuard],
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'messages/:token',
+    component: MessageComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: 'map',
     component: MapComponent,
-    canActivate: [AuthGuardGuard],
+    canActivate: [AuthGuard],
   },
-
   {
-    path: 'token',
-    component: TokenComponent,
-    canActivate: [AuthGuardGuard],
+    path: 'map/:token',
+    component: MapComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'trades',
+    component: TradesComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: 'stories',
     component: StoriesComponent,
-    canActivate: [AuthGuardGuard],
+    canActivate: [AuthGuard],
   },
 ];
 
@@ -49,4 +61,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: [AuthService],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

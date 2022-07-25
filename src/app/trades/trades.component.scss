@@ -1,5 +1,5 @@
 .middle-section {
-  // width: 812px;
+  width: 710px;
   .page-title {
     padding: 15px;
     font-weight: normal;
@@ -52,7 +52,7 @@
   }
 
   .table-wrapper {
-    padding: 0 25px;
+    padding: 0 12px;
     max-height: 620px;
     overflow-y: auto;
 
@@ -61,7 +61,6 @@
       text-align: left;
       border-spacing: 0;
       border-collapse: collapse;
-      // border: 1px solid #3e3e3e;
       thead {
         position: sticky;
         top: -1px;
@@ -112,7 +111,6 @@
               height: 55px;
               border-radius: 4px;
               object-fit: cover;
-              // margin-right: 10px;
             }
             p {
               margin: 0;
@@ -246,7 +244,7 @@
       overflow: hidden;
       position: absolute;
       content: attr(data-loading-text);
-      animation: loading 3s infinite;
+      animation: loading 2s infinite;
     }
 
     @keyframes loading {

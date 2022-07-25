@@ -1,19 +1,15 @@
-<div class="main-wrapper">
-  <app-menu></app-menu>
-  <div class="displayCardsContainer">
+<div class="page-outer">
+
+  <div class="displayCardsContainer story-page-wrapper">
     <ng-container *ngIf="infinite | async as people">
       <cdk-virtual-scroll-viewport itemSize="160" (scrolledIndexChange)="
-                  nextBatch($event, people[people.length - 1].id)
-                ">
-        <mat-card (click)="openEditDialog(p)" *cdkVirtualFor="let p of people; let i = index; trackBy: trackByIdx"
+                  nextBatch($event, people[people.length - 1].id)">
+        <mat-card  (click)="openProfile(p.id)" *cdkVirtualFor="let p of people; let i = index; trackBy: trackByIdx"
           style="padding: 0px" class="animated lightSpeedIn">
           <div class="story-outer">
             <div class="story-img">
-              <img [src]="
-                            'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
-                            p.id +
-                            '.png'
-                          " />
+              <img [src]="'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+                p.id + '.png'" />
             </div>
             <div class="story-description">
               <h4>
@@ -30,5 +26,4 @@
       </cdk-virtual-scroll-viewport>
     </ng-container>
   </div>
-
 </div>

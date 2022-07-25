@@ -3,7 +3,17 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiKey: 'AIzaSyDbrLIaFZomlneiEN1YM7wYrEaTHUPbdVU',
+  authDomain: 'wicked-cranium-cradle-testnet.firebaseapp.com',
+  projectId: 'wicked-cranium-cradle-testnet',
+  storageBucket: 'wicked-cranium-cradle-testnet.appspot.com',
+  messagingSenderId: '663270172205',
+  appId: '1:663270172205:web:8cccbcd3813fbd9c413aa4',
+  measurementId: 'G-VX5S4D5QW0',
+  serverUrl : 'https://9cysmdit6k5z.usemoralis.com:2053/server',
+  moralisAppId : '428gwFICaWzP45vMKVnVvGFycNTCdDwduRWP65mk',
+  infuraId: 'eadb71d1d54f476ea23a0babf7558ff0'
 };
 
 /*

@@ -2,19 +2,21 @@
 
 .menu-header {
   display: flex;
-  width: 1024px;
+  width: 1085px;
   margin: 0 auto;
   align-items: center;
   .logo {
-    width: 200px;
+    width: 215px;
     text-align: center;
     margin: 20px 0 10px 0;
+    display: flex;
+    justify-content: center;
     img {
       width: 103px;
     }
   }
   h1 {
-    width: 650px;
+    width: calc(100% - 165px);
     font-size: 48px;
   }
 }

@@ -1,5 +1,9 @@
 $DarkSilver: #707070;
 
+.story-page-wrapper {
+    width: 881px;
+}
+
 .editableCardsContainer {
     float: left;
     width: 166px;
@@ -14,8 +18,6 @@ $DarkSilver: #707070;
 }
 
 .displayCardsContainer {
-    float: left;
-    width: 100%;
     height: 700px;
     margin: 0 8px;
     background-color: #141414;
@@ -90,23 +92,14 @@ $DarkSilver: #707070;
     }
 }
 
-// infinite scroll styling
 
 cdk-virtual-scroll-viewport,
 ul {
-    // height: 700px;
-    // margin: 0 auto;
-    // display: flex;
-    // align-items: center;
-    // flex-direction: column;
-    // justify-content: center;
     list-style: none;
 
     mat-card {
         height: 130px;
         margin: 10px;
-        // padding: 10px;
-        // $DarkSilver ==>
         background-color: #ffffff;
 
         box-shadow: 2px 2px 3px rgba($color: #888888, $alpha: 0.2);
@@ -118,6 +111,7 @@ ul {
 
     &::-webkit-scrollbar-track {
         -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     }
 
     &::-webkit-scrollbar-thumb {

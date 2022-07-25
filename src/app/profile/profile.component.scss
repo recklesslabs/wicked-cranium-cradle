@@ -64,7 +64,6 @@ $DarkSilver: #707070;
 }
 
 .cardsContainer {
-  width: 1024px;
   height: 710px;
   margin: 0 auto;
   display: flex;
@@ -76,18 +75,10 @@ $DarkSilver: #707070;
 
 cdk-virtual-scroll-viewport,
 ul {
-  // height: 700px;
-  // margin: 0 auto;
-  // display: flex;
-  // align-items: center;
-  // flex-direction: column;
-  // justify-content: center;
   list-style: none;
   mat-card {
     height: 130px;
     margin: 10px;
-    // padding: 10px;
-    // $DarkSilver ==>
     background-color: #ffffff;
 
     box-shadow: 2px 2px 3px rgba($color: #888888, $alpha: 0.2);
@@ -112,6 +103,7 @@ ul {
   .mat-card {
     background-color: transparent;
     box-shadow: none;
+    padding-bottom: 0;
     &.home-top-card {
       display: flex;
       padding-bottom: 0;
@@ -164,6 +156,7 @@ ul {
         align-items: center;
         margin-right: 10px;
         border-right: 1px solid #3e3e3e;
+        text-decoration: none;
         &:last-child {
           border-right: 0;
         }
@@ -173,7 +166,6 @@ ul {
           margin-right: 12px;
         }
         .img-round {
-          // background-color: #242424;
           height: 30px;
           width: 30px;
           border-radius: 50px;
@@ -206,14 +198,13 @@ ul {
     font-size: 15px;
   }
   .comment-outer {
-    // position: relative;
-    max-height: 415px;
+    max-height: 260px;
     overflow-y: auto;
     overflow-x: hidden;
     .comment-list {
       padding-left: 0;
       margin: 0;
-      margin-top: 20px;
+      margin-top: 0px;
       position: relative;
       &::after {
         content: "";
@@ -260,7 +251,7 @@ ul {
           border-radius: 50px;
         }
         .user-name {
-          font-size: 14px;
+          font-size: 16px;
           color: #fff;
           margin-left: 12px;
         }
@@ -270,21 +261,27 @@ ul {
           color: #aeb9ff;
           font-size: 14px;
           padding-left: 52px;
+          margin-top: -8px;
         }
         .post-replay-btn {
           margin: 10px 0 0 55px;
-          background-color: #7b8235;
+          background-color: transparent;
           padding: 6px 0 2px;
           line-height: normal;
           color: #fff;
           min-width: 45px;
           font-size: 12px;
           padding-top: 2px;
+          box-shadow: none;
+          span {
+            color: #6ecfa5;
+            font-weight: 600;
+            margin-left: 6px;
+          }
         }
       }
       .replay-box-outer {
         margin: 8px 0 5px 55px;
-        // display: flex;
         width: 100%;
         input {
           background-color: #1e1e1e !important;
@@ -300,8 +297,6 @@ ul {
         }
         .btn-box {
           display: flex;
-          /* flex-wrap: wrap; */
-          /* width: 100%; */
           justify-content: end;
           align-items: center;
           margin-top: 10px;
@@ -316,7 +311,7 @@ ul {
           }
           .post-send-btn {
             margin: 0 0 0 10px;
-            background-color: #7b8235;
+            background-color: #2f9166;
             padding: 6px 0 2px;
             line-height: normal;
             color: #fff;
@@ -373,10 +368,22 @@ ul {
   display: flex;
   justify-content: flex-end;
   margin-top: 15px;
-  button{
+  button {
     background-color: #7b8235;
     padding: 0px 12px;
     color: #fff;
     padding-top: 5px;
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
+}
+
+ul:empty {
+  display: none !important;
+}
+
+.name{
+  cursor: pointer;
 }

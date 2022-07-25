@@ -1,6 +1,11 @@
-import { Component, Inject, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  Inject,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-// import { MapInfoWindow, MapMarker, GoogleMap } from '@angular/google-maps';
 import { AngularFirestore } from '@angular/fire/firestore';
 
 interface ITokenState {
@@ -32,26 +37,16 @@ const INITIAL_STATE: ITokenState = {
     <div>
       <div class="home-add-dialog" mat-dialog-content>
         <div class="left-profile animated fadeInDown">
-          <div
-            class="img-card"
-            [ngClass]="
-              setAsPfp ? 'rounded-img ' : 'square-img animated flipInX'
-            "
-          >
-            <img
-              [src]="
-                'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
-                data.token.id +
-                '.png'
-              "
-              alt="img"
-            />
+          <div class="img-card"
+            [ngClass]="setAsPfp ? 'rounded-img ' : 'square-img animated flipInX'">
+            <img [src]="'https://raw.githubusercontent.com/recklesslabs/wickedcraniums-300x300/main/' +
+                data.token.id + '.png'" alt="img"/>
           </div>
           <h4>Skull #{{ data.token.id }}</h4>
           <div class="action-slide-toggle">
-            <mat-slide-toggle (change)="setAsPfpStatus()" [(ngModel)]="setAsPfp"
-              >Set as PFP</mat-slide-toggle
-            >
+            <mat-slide-toggle (change)="setAsPfpStatus()" [(ngModel)]="setAsPfp">
+              Set as PFP
+            </mat-slide-toggle>
           </div>
         </div>
         <div class="right-profile">
@@ -86,11 +81,10 @@ const INITIAL_STATE: ITokenState = {
               <input
                 placeholder=""
                 matInput
-                [(ngModel)]="data.token.discord_link"
-              />
-              <mat-icon matPrefix class="my-icon"
-                ><img src="../../assets/images/discord.svg" alt="img"
-              /></mat-icon>
+                [(ngModel)]="data.token.discord_link"/>
+              <mat-icon matPrefix class="my-icon">
+                <img src="../../assets/images/discord.svg" alt="img"/>
+              </mat-icon>
             </mat-form-field>
           </div>
 
@@ -98,17 +92,17 @@ const INITIAL_STATE: ITokenState = {
             <div class="action-slide-toggle">
               <mat-slide-toggle
                 (change)="optInLocStatus()"
-                [(ngModel)]="optInLoc"
-                >Opt in location</mat-slide-toggle
-              >
+                [(ngModel)]="optInLoc">
+                Opt in location
+              </mat-slide-toggle>
             </div>
 
-            <div
-              class="map-area"
-              [ngClass]="optInLoc ? 'show-map ' : 'hide-map'"
-            >
-            <div #mapContainer1 id="map1" style="height: 200px;width: 100%;"></div>
-             
+            <div class="map-area" [ngClass]="optInLoc ? 'show-map ' : 'hide-map'">
+              <div
+                #mapContainer1
+                id="map1"
+                style="height: 200px;width: 100%;">
+              </div>
             </div>
           </div>
           <div mat-dialog-actions class="animated fadeInDown">
@@ -124,7 +118,7 @@ const INITIAL_STATE: ITokenState = {
 export class EditDialogComponent implements AfterViewInit {
   public tokenState: ITokenState;
 
-  @ViewChild("mapContainer1", { static: false }) gmap: ElementRef;
+  @ViewChild('mapContainer1', { static: false }) gmap: ElementRef;
   map: google.maps.Map;
 
   lat = 0.026843;
@@ -198,12 +192,10 @@ export class EditDialogComponent implements AfterViewInit {
 
         this.loadAllMarkers(data.token.location);
       });
-
   }
 
   ngAfterViewInit(): void {
     this.mapInitializer();
-
   }
 
   USGSOverlay = class extends google.maps.OverlayView {
@@ -220,7 +212,7 @@ export class EditDialogComponent implements AfterViewInit {
 
     onAdd() {
       this.div = document.createElement('div');
-      this.div.classList.add("chintan");
+      this.div.classList.add('chintan');
       this.div.style.borderStyle = '0px solid red';
       this.div.style.borderWidth = '1px';
       this.div.style.position = 'absolute';
@@ -254,7 +246,7 @@ export class EditDialogComponent implements AfterViewInit {
         this.div.style.height = sw.y - ne.y + 'px';
       }
     }
-  }
+  };
 
   mapInitializer(): void {
     this.map = new google.maps.Map(this.gmap.nativeElement, this.mapOptions);
@@ -263,13 +255,13 @@ export class EditDialogComponent implements AfterViewInit {
       position: null,
       map: this.map,
       icon: '../assets/images/marker.svg',
-      title: "",
+      title: '',
       draggable: true,
     });
 
     const bounds = new google.maps.LatLngBounds(
-      new google.maps.LatLng(-180.000000, -85.000000),
-      new google.maps.LatLng(180.000000, 85.000000)
+      new google.maps.LatLng(-180.0, -85.0),
+      new google.maps.LatLng(180.0, 85.0)
     );
 
     let image = '../../assets/images/WC_Map_6.svg';
@@ -277,25 +269,27 @@ export class EditDialogComponent implements AfterViewInit {
     const overlay = new this.USGSOverlay(bounds, image);
     overlay.setMap(this.map);
 
-    this.map.addListener("click", (event: any) => {
-
+    this.map.addListener('click', (event: any) => {
+  
       this.dialogRef.componentInstance.data.token.location = JSON.parse(
         JSON.stringify(event.latLng)
       );
 
-      this.marker.setPosition(this.dialogRef.componentInstance.data.token.location);
+      this.marker.setPosition(
+        this.dialogRef.componentInstance.data.token.location
+      );
 
     });
 
-
-    this.marker.addListener("dragend", (event: any) => {
+    this.marker.addListener('dragend', (event: any) => {
       this.dialogRef.componentInstance.data.token.location = JSON.parse(
         JSON.stringify(event.latLng)
       );
 
-      this.marker.setPosition(this.dialogRef.componentInstance.data.token.location);
+      this.marker.setPosition(
+        this.dialogRef.componentInstance.data.token.location
+      );
     });
-
   }
 
   onNoClick(): void {

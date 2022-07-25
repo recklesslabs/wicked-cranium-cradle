@@ -14,13 +14,11 @@ export interface UserComments {
 export class CommentService {
   DbRef: any;
   arrAdd: Array<string> = [];
-  constructor(private db: AngularFirestore) {
-    this.comment();
-  }
+  constructor(private db: AngularFirestore) {}
 
-  comment(): any {
-      this.DbRef = this.db.collection('comments', (ref) =>
-      ref.orderBy('commentTime', 'desc')
+  comment(token_id: number): any {
+    this.DbRef = this.db.collection('comments', (ref) =>
+      ref.where('token_id', '==', token_id).orderBy('commentTime', 'desc')
     );
   }
 

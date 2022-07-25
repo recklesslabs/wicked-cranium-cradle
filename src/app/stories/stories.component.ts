@@ -1,9 +1,10 @@
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap, scan, mergeMap, throttleTime } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap, scan, mergeMap, throttleTime } from 'rxjs/operators';
-import firebase from 'firebase/app';
+import { TokenService } from '../services/token.service';
 
 @Component({
   selector: 'app-stories',
@@ -18,7 +19,11 @@ export class StoriesComponent implements OnInit {
   batch = 10;
   theEnd = false;
 
-  constructor(public db: AngularFirestore) {
+  constructor(
+    public db: AngularFirestore,
+    private router: Router,
+    private tokenService: TokenService
+  ) {
     const batchMap = this.offset.pipe(
       throttleTime(500),
       mergeMap((n) => this.getBatch(n)),
@@ -29,13 +34,14 @@ export class StoriesComponent implements OnInit {
     this.infinite = batchMap.pipe(map((v) => Object.values(v)));
   }
 
-  openEditDialog(token: number) {
-    console.log(token);
-  }
-
   trackByIdx(i: any) {
     return i;
   }
+
+  openProfile = async (tokenId: number) => {
+    var TokenAddress = await this.tokenService.getAddressFromToken(tokenId);
+    this.router.navigate(['/', 'profile', tokenId, TokenAddress]);
+  };
 
   getBatch(offset: any) {
     return this.db
@@ -60,14 +66,12 @@ export class StoriesComponent implements OnInit {
     if (this.theEnd) {
       return;
     }
-
-    const end = (this.viewport as CdkVirtualScrollViewport).getRenderedRange()
-      .end;
+    const end = (this.viewport as CdkVirtualScrollViewport).getRenderedRange().end;
     const total = (this.viewport as CdkVirtualScrollViewport).getDataLength();
     if (end === total) {
       this.offset.next(offset);
     }
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 }

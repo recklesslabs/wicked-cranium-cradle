@@ -1,9 +1,12 @@
+import CRC32 from 'crc-32';
+import { Subject } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import CRC32 from 'crc-32';
 import { ContractService } from './contract.service';
+import { GlobalService } from './global.service';
 
-export interface Users {
+export interface Message {
   id: string;
   message: string;
   messageTime: string;
@@ -19,33 +22,32 @@ export interface SingleUser {
   providedIn: 'root',
 })
 export class ChatService {
-  userAddOne: any = '';
-  userAddTwo: any = '';
   DbRef: any;
   DbRefUser: any;
   DbRefOtherUser: any;
   arrAdd: Array<string> = [];
+  msgCount = new Subject<any>();
 
   constructor(
     private db: AngularFirestore,
-    public contractService: ContractService
+    public contractService: ContractService,
+    public globalService: GlobalService
   ) {
     var accObj = this.contractService.getAccoutData();
     this.chat(accObj.address, '');
+    this.getMsgBadgeCount();
   }
 
-  chat(ad1: string, ad2: string): any {
-    this.userAddOne = CRC32.str(ad1.toLowerCase());
-    this.userAddTwo = CRC32.str(ad2.toLowerCase());
-    this.arrAdd = [this.userAddOne, this.userAddTwo].sort();
+  chat(senderAddress: string, receiverAddress: string): any {
+    var senderAddr: any = CRC32.str(senderAddress.toLowerCase());
+    var receiverAddr: any = CRC32.str(receiverAddress.toLowerCase());
+    this.arrAdd = [senderAddr, receiverAddr].sort();
     this.DbRef = this.db.collection(
       this.arrAdd[0] + '_' + this.arrAdd[1],
       (ref) => ref.orderBy('messageTime', 'desc')
     );
-    this.DbRefUser = this.db.collection(this.userAddOne.toString());
-    this.DbRefOtherUser = this.db.collection(
-      this.userAddTwo.toString() + ' Other'
-    );
+    this.DbRefUser = this.db.collection(senderAddr.toString());
+    this.DbRefOtherUser = this.db.collection(receiverAddr.toString());
   }
 
   getAllMessages(): any {
@@ -56,8 +58,8 @@ export class ChatService {
     return this.DbRefUser;
   }
 
-  createMessage(users: Users): any {
-    return this.DbRef.add({ ...users });
+  createMessage(message: Message): any {
+    return this.DbRef.add({ ...message });
   }
 
   createUser(singleUser: SingleUser) {
@@ -66,5 +68,47 @@ export class ChatService {
 
   createOtherUser(singleUser: SingleUser) {
     return this.DbRefOtherUser.add({ ...singleUser });
+  }
+
+  async UserData(walletAddr: string) {
+    var pfpTokenData = await this.globalService.globalTokensData(walletAddr);
+    // var pfpTokenArr = await this.globalService.getGlobalProfile(walletAddr);
+    // var pfpTokenData: any = pfpTokenArr.find((x: any) => x.set_as_pfp == true);
+    return pfpTokenData;
+  }
+
+  getMsgBadgeCount() {
+    this.getOtherUser()
+      .snapshotChanges()
+      .pipe(
+        debounceTime(200),
+        map((changes: any) =>
+          changes.map((c: any) => ({
+            id: c.payload.doc.id,
+            ...c.payload.doc.data(),
+          }))
+        )
+      )
+      .subscribe(async (data: any[]) => {
+        var pfpTokenData = await Promise.all(
+          data.map(async (obj: any) => {
+            const { id: receiver_id } = obj;
+            return {
+              ...obj,
+              ...(await this.UserData(obj.address.toLowerCase())),
+              receiver_id: receiver_id,
+            };
+          })
+        );
+        let tempCount: any = 0;
+        this.msgCount.next(tempCount);
+        pfpTokenData.map((c: any) => {
+          if (c.unreadCount !== 0) {
+            tempCount = tempCount + c.unreadCount;
+            this.msgCount.next(tempCount);
+          }
+        });
+      });
+    return this.msgCount;
   }
 }

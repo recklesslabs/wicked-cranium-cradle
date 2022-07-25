@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
 import Moralis from 'moralis';
+import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { mainnetContract, testnetContract } from '../constants';
 
 @Injectable({
   providedIn: 'root',
@@ -7,39 +9,44 @@ import Moralis from 'moralis';
 export class TokenService {
   nftData: any | undefined = [];
   constructor() {
-    const serverUrl = 'https://sfgsvtgyp5uc.usemoralis.com:2053/server';        // client's
-    const appId = 'pQX2NP30kEs5rehM59txrExaTd7ps52aDk35LgRh';
-
+    const serverUrl = environment.serverUrl;
+    const appId = environment.moralisAppId;
     Moralis.start({ serverUrl, appId });
   }
 
-  getNftData = async () => {
+  getNFTTrades = async () => {
     const getNFTTradesOptions: any = {
-      address: '0x85f740958906b317de6ed79663012859067e745b', // Contract address(mainnet)
+      address: mainnetContract,
     };
-
     const NFTTrades = await Moralis.Web3API.token.getNFTTrades(
       getNFTTradesOptions
     );
-
     return NFTTrades.result?.slice(0, 100);
   };
 
   getAddressFromToken = async (tokenId: number) => {
     const getTokenIdOwnersOptions: any = {
-      address: '0x75d42ec0b5a8d023c27c400902ce363a9093e419',
-      token_id: tokenId,
+      address: testnetContract,
+      token_id: tokenId.toString(),
       chain: 'rinkeby',
     };
 
     var address: string = '';
-
-    const NFTOwners: any = await Moralis.Web3API.token.getTokenIdOwners(getTokenIdOwnersOptions);
-
+    const NFTOwners: any = await Moralis.Web3API.token.getTokenIdOwners(
+      getTokenIdOwnersOptions
+    );
     NFTOwners.result.map((i: any) => {
       address = i.owner_of;
     });
 
     return address;
+  };
+
+  getTokenFromAddress = async (address: string) => {
+    const nftOptions: any = {
+      chain: 'rinkeby',
+      address: address,
+    };
+    return await Moralis.Web3API.account.getNFTs(nftOptions);
   };
 }
