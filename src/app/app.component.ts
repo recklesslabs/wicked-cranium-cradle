@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
         jsonObj.address
       );
       if (this.getTokens.tokens.length == 0) {
-        this.message = 'Could not find Wicked Craniums in your Metamask';
+        this.message = 'Could not find Wicked Craniums in your Wallet';
       } else {
         this.tokens = this.getTokens.tokens.length;
         if (location.path() != "") {
@@ -66,11 +66,11 @@ export class AppComponent implements OnInit {
         this.router.navigateByUrl('/profile');
         return true;
       } else {
-        this.message = 'Could not find Wicked Craniums in your Metamask';
+        this.message = 'Could not find Wicked Craniums in your Wallet';
         return false;
       }
     } else {
-      this.message = 'Could not verify you via Metamask';
+      this.message = 'Could not find Wicked Craniums in your Wallet';
       return false;
     }
   }

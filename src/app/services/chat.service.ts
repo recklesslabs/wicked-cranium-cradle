@@ -90,16 +90,7 @@ export class ChatService {
         )
       )
       .subscribe(async (data: any[]) => {
-        var pfpTokenData = await Promise.all(
-          data.map(async (obj: any) => {
-            const { id: receiver_id } = obj;
-            return {
-              ...obj,
-              ...(await this.UserData(obj.address.toLowerCase())),
-              receiver_id: receiver_id,
-            };
-          })
-        );
+        var pfpTokenData = data;
         let tempCount: any = 0;
         this.msgCount.next(tempCount);
         pfpTokenData.map((c: any) => {
