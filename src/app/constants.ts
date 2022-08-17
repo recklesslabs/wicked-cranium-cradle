@@ -1,5 +1,5 @@
-export const mainnetContract = '0x85f740958906b317de6ed79663012859067e745b';
-export const testnetContract = '0x75d42Ec0B5A8d023C27c400902ce363a9093E419';
+export const mainnetContract = '0x65E39D76984d3De5fcC3c426F6cECb46477765a8'; // change mainnet address before prod
+export const testnetContract = '0x65E39D76984d3De5fcC3c426F6cECb46477765a8';
 
 export const mainnetAbi = [
   { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
