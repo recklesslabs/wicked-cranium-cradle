@@ -20,3 +20,13 @@ rather join desk wrestle inner summer coast people practice spread steel diet
 0xf3d0760b0e40d955692cfb140ef7684b6de3e0e3ed9d87f6344076ca98607645 
 address middle face system abuse decide drop angle arctic meadow brick abstract
 ```
+
+Dev Hosting URLS:
+
+```
+goerli-cradle.web.app
+Default
+goerli-cradle.firebaseapp.com
+Default
+```
+
