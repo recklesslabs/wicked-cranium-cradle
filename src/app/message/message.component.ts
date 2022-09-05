@@ -91,7 +91,7 @@ export class MessageComponent implements OnInit {
       var accObj = this.contractService.getAccoutData();
       this.message.id = accObj.address;
       var tokenId: any = this.route.snapshot.paramMap.get('token');
-      let urlTokenAdd = await this.tokenService.getAddressFromToken(tokenId);
+      let urlTokenAdd = await this.globalService.getAddressFromToken(tokenId);
       this.getChats(this.message.id, urlTokenAdd);
     } catch (e) { }
   };
@@ -104,10 +104,10 @@ export class MessageComponent implements OnInit {
 
   getChats = (senderAddress: string, receiverAddress: string) => {
     this.chatService.chat(senderAddress, receiverAddress);
-    this.singleUser.id = CRC32.str(receiverAddress.toLowerCase());
-    this.singleUser.address = receiverAddress.toLowerCase();
-    this.otherUser.id = CRC32.str(senderAddress.toLowerCase());
-    this.otherUser.address = senderAddress.toLowerCase();
+    this.singleUser.id = CRC32.str(receiverAddress);
+    this.singleUser.address = receiverAddress;
+    this.otherUser.id = CRC32.str(senderAddress);
+    this.otherUser.address = senderAddress;
     this.flag = false;
     this.selected = receiverAddress;
     this.getMessages();
@@ -124,7 +124,7 @@ export class MessageComponent implements OnInit {
       .getAllMessages()
       .snapshotChanges()
       .pipe(
-        debounceTime(200),
+        debounceTime(800),
         map((changes: any) =>
           changes.map((c: any) => ({
             id: c.payload.doc.id,
@@ -138,7 +138,7 @@ export class MessageComponent implements OnInit {
             const { id: receiver_id } = obj;
             return {
               ...obj,
-              ...(await this.chatService.UserData(obj.id.toLowerCase())),
+              ...(await this.chatService.UserData(obj.id)),
               receiver_id: receiver_id,
             };
           })
@@ -178,7 +178,7 @@ export class MessageComponent implements OnInit {
             const { id: receiver_id } = obj;
             return {
               ...obj,
-              ...(await this.chatService.UserData(obj.address.toLowerCase())),
+              ...(await this.chatService.UserData(obj.address)),
               receiver_id: receiver_id,
             };
           })
@@ -219,14 +219,14 @@ export class MessageComponent implements OnInit {
       });
   }
 
-  openProfile = async (tokenId: number) => {
-    var TokenAddress = await this.tokenService.getAddressFromToken(tokenId);
+  openProfile = async (tokenId: string) => {
+    var TokenAddress = await this.globalService.getAddressFromToken(tokenId);
     this.router.navigate(['/', 'profile', tokenId, TokenAddress]);
   };
 
   saveUserMessage(): void {
     this.setUnreadCount(
-      CRC32.str(this.singleUser.address.toLowerCase()).toString(),
+      CRC32.str(this.singleUser.address).toString(),
       this.otherUser.address.toString()
     );
 

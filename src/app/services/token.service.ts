@@ -1,7 +1,7 @@
 import Moralis from 'moralis';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { mainnetContract, testnetContract } from '../constants';
+import { mainnetContract } from '../constants';
 
 @Injectable({
   providedIn: 'root',
@@ -22,31 +22,5 @@ export class TokenService {
       getNFTTradesOptions
     );
     return NFTTrades.result?.slice(0, 100);
-  };
-
-  getAddressFromToken = async (tokenId: number) => {
-    const getTokenIdOwnersOptions: any = {
-      address: testnetContract,
-      token_id: tokenId.toString(),
-      chain: 'rinkeby',
-    };
-
-    var address: string = '';
-    const NFTOwners: any = await Moralis.Web3API.token.getTokenIdOwners(
-      getTokenIdOwnersOptions
-    );
-    NFTOwners.result.map((i: any) => {
-      address = i.owner_of;
-    });
-
-    return address;
-  };
-
-  getTokenFromAddress = async (address: string) => {
-    const nftOptions: any = {
-      chain: 'rinkeby',
-      address: address,
-    };
-    return await Moralis.Web3API.account.getNFTs(nftOptions);
   };
 }

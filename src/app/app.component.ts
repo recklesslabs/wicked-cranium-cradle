@@ -37,10 +37,10 @@ export class AppComponent implements OnInit {
         jsonObj.address
       );
       if (this.getTokens.tokens.length == 0) {
-        this.message = 'Could not find Wicked Craniums in your Wallet';
+        this.message = 'Could not find Wicked Craniums in your Metamask';
       } else {
         this.tokens = this.getTokens.tokens.length;
-        if (location.path() != "") {
+        if (location.path() != '') {
           this.router.navigateByUrl(location.path());
         } else {
           this.router.navigateByUrl('/profile');
@@ -66,20 +66,21 @@ export class AppComponent implements OnInit {
         this.router.navigateByUrl('/profile');
         return true;
       } else {
-        this.message = 'Could not find Wicked Craniums in your Wallet';
+        this.message = 'Could not find Wicked Craniums in your Metamask';
         return false;
       }
     } else {
-      this.message = 'Could not find Wicked Craniums in your Wallet';
+      this.message = 'Could not verify you via Metamask';
+
       return false;
     }
   }
   async createUser(tokens: number[], pk: string) {
     this.db
-      .collection('pktotokenid')
+      .collection('address_to_tokens')
       .doc(pk)
       .set({
-        tokenIds: tokens.sort(function (a, b) {
+        tokens: tokens.sort(function (a, b) {
           return a - b;
         }),
       });

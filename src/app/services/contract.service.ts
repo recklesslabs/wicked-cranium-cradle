@@ -39,7 +39,6 @@ export class ContractService {
   address$: Observable<any>;
   batch = 10;
   theEnd = false;
-  public accountsObservable = new Subject<string[]>();
   web3Modal;
   globalObject: any;
   cipherData: any;
@@ -47,6 +46,7 @@ export class ContractService {
   isLoading = new Subject<boolean>();
   accountTokens = new Subject<object>();
   message = new Subject<string>();
+  public accountsObservable = new Subject<string[]>();
 
   web3Inst: any;
 
@@ -223,24 +223,6 @@ export class ContractService {
         }, 2000);
       } catch (err: any) {
         console.log(err);
-        // This error code indicates that the chain has not been added to MetaMask
-        if (err.code === 4902) {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [
-              {
-                chainName: 'Polygon Mainnet',
-                chainId: web3.utils.toHex(chainId),
-                nativeCurrency: {
-                  name: 'MATIC',
-                  decimals: 18,
-                  symbol: 'MATIC',
-                },
-                rpcUrls: ['https://polygon-rpc.com/'],
-              },
-            ],
-          });
-        }
       }
     } else {
       this.isLoading.next(true);

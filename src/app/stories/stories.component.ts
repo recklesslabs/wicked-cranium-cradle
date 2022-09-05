@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { TokenService } from '../services/token.service';
+import { GlobalService } from '../services/global.service';
 
 @Component({
   selector: 'app-stories',
@@ -22,7 +22,7 @@ export class StoriesComponent implements OnInit {
   constructor(
     public db: AngularFirestore,
     private router: Router,
-    private tokenService: TokenService
+    public globalService: GlobalService,
   ) {
     const batchMap = this.offset.pipe(
       throttleTime(500),
@@ -38,8 +38,8 @@ export class StoriesComponent implements OnInit {
     return i;
   }
 
-  openProfile = async (tokenId: number) => {
-    var TokenAddress = await this.tokenService.getAddressFromToken(tokenId);
+  openProfile = async (tokenId: string) => {
+    var TokenAddress = await this.globalService.getAddressFromToken(tokenId);
     this.router.navigate(['/', 'profile', tokenId, TokenAddress]);
   };
 

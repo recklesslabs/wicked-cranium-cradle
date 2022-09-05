@@ -1,4 +1,4 @@
-export const mainnetContract = '0x65E39D76984d3De5fcC3c426F6cECb46477765a8'; // change mainnet address before prod
+export const mainnetContract = '0x85f740958906b317de6ed79663012859067e745b';
 export const testnetContract = '0x65E39D76984d3De5fcC3c426F6cECb46477765a8';
 
 export const mainnetAbi = [
@@ -321,7 +321,33 @@ export const mainnetAbi = [
   },
 ];
 
-export const testnetAbi = [
+export const testnetAbiTrans: any = {
+  anonymous: false,
+  inputs: [
+    {
+      indexed: true,
+      internalType: 'address',
+      name: 'from',
+      type: 'address',
+    },
+    {
+      indexed: true,
+      internalType: 'address',
+      name: 'to',
+      type: 'address',
+    },
+    {
+      indexed: true,
+      internalType: 'uint256',
+      name: 'tokenId',
+      type: 'uint256',
+    },
+  ],
+  name: 'Transfer',
+  type: 'event',
+};
+
+export const testnetAbi: any = [
   { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
   {
     anonymous: false,

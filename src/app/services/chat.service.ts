@@ -39,8 +39,8 @@ export class ChatService {
   }
 
   chat(senderAddress: string, receiverAddress: string): any {
-    var senderAddr: any = CRC32.str(senderAddress.toLowerCase());
-    var receiverAddr: any = CRC32.str(receiverAddress.toLowerCase());
+    var senderAddr: any = CRC32.str(senderAddress);
+    var receiverAddr: any = CRC32.str(receiverAddress);
     this.arrAdd = [senderAddr, receiverAddr].sort();
     this.DbRef = this.db.collection(
       this.arrAdd[0] + '_' + this.arrAdd[1],
@@ -72,8 +72,6 @@ export class ChatService {
 
   async UserData(walletAddr: string) {
     var pfpTokenData = await this.globalService.globalTokensData(walletAddr);
-    // var pfpTokenArr = await this.globalService.getGlobalProfile(walletAddr);
-    // var pfpTokenData: any = pfpTokenArr.find((x: any) => x.set_as_pfp == true);
     return pfpTokenData;
   }
 

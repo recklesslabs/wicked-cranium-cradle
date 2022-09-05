@@ -12,14 +12,31 @@ export class GlobalService {
     public db: AngularFirestore,
     public contractService: ContractService,
     public tokenService: TokenService
-  ) {
-  }
+  ) {}
 
-  /** * Get tokens form firebase (Temp)*/
-  async globalTokens(walletAddr: any): Promise<any> {
-    var pktotokenid = await this.db
-      .collection('pktotokenid')
-      .ref.where(firebase.firestore.FieldPath.documentId(), '==', walletAddr)
+  getAddressFromToken = async (tokenId: any) => {
+    var address: any = await this.db
+      .collection('tokens_to_address')
+      .ref.where(
+        firebase.firestore.FieldPath.documentId(),
+        '==',
+        tokenId.toString()
+      )
+      .get()
+      .then(({ docs }) => {
+        var ids = docs.map((doc) => {
+          var addressData: any = doc.data();
+          return addressData.owner;
+        });
+        return ids[0];
+      });
+    return address;
+  };
+
+  getTokenFromAddress = async (address: string) => {
+    var pktotokenid: any = await this.db
+      .collection('address_to_tokens')
+      .ref.where(firebase.firestore.FieldPath.documentId(), '==', address)
       .get()
       .then(({ docs }) => {
         var ids = docs.map((doc) => {
@@ -28,121 +45,119 @@ export class GlobalService {
         });
         return ids[0];
       });
-    return pktotokenid;
-  }
+    return pktotokenid.tokens;
+  };
 
-  /** *  Get token (who has pfp true) data from firebase  (Temp) */
-  async globalTokensData(walletAddr: any): Promise<any> {
-    var globalData = await this.globalTokens(walletAddr);
-    return await this.db
-      .collection('tokenidtodata')
-      .ref.where(
-        firebase.firestore.FieldPath.documentId(),
-        'in',
-        globalData.tokenIds.join().split(',') // compare array to array (Doc id and a simple array)
-      )
-      .where('set_as_pfp', '==', true)
-      .get()
-      .then(({ docs }) => {
-        var idData = docs.map((doc) => {
-          var tokenData = doc.data();
-          return tokenData;
-        });
-        return idData[0];
-      });
-  }
+  globalTokensData = async (walletAddr: any): Promise<any> => {
+    var globalData: any = await this.getTokenFromAddress(walletAddr);
 
-  /** *  Get token data from firebase  (Temp) */
-  async getDataOtherAddr(walletAddr: any): Promise<any> {
-    var globalData = await this.globalTokens(walletAddr);
-    return await this.db
-      .collection('tokenidtodata')
-      .ref.where(
-        firebase.firestore.FieldPath.documentId(),
-        'in',
-        globalData.tokenIds.join().split(',') // compare array to array (Doc id and a simple array)
-      )
-      .get()
-      .then(({ docs }) => {
-        var idData = docs.map((doc) => {
-          var tokenData = doc.data();
-          return tokenData;
-        });
-        return idData;
-      });
-  }
+    const batches: Array<any> = [];
+    const collectionPath = this.db.collection('tokenidtodata');
 
-  /** * set default pfp  */
-  async getCurrentPFP(): Promise<any> {
-    var defaultPfp = await this.contractService.getAccoutData();
-    return await this.db
-      .collection('tokenidtodata')
-      .ref.where(
-        firebase.firestore.FieldPath.documentId(),
-        'in',
-        defaultPfp.tokens.join().split(',')
-      )
-      .where('set_as_pfp', '==', true)
-      .get()
-      .then(({ docs }) => {
-        if (docs.length == 0) {
-          this.db
-            .collection('tokenidtodata')
-            .doc(defaultPfp.tokens[0].toString())
-            .update({
-              set_as_pfp: true,
-            });
-          return defaultPfp.tokens[0];
-        } else {
-          var idData = docs.map((doc) => {
-            var tokenData = doc.data();
-            return tokenData;
-          });
-          var pfpId: any = idData[0];
-          return pfpId.id;
-        }
-      });
-  }
-
-  async getCurrentProfile(): Promise<any> {
-    const dataObj = this.contractService.getAccoutData();
-    return await this.db
-      .collection('tokenidtodata')
-      .ref.where(
-        firebase.firestore.FieldPath.documentId(),
-        'in',
-        dataObj.tokens.join().split(',')
-      )
-      .get()
-      .then(({ docs }) => {
-        var idData = docs.map((doc) => {
-          var tokenData = doc.data();
-          return tokenData;
-        });
-        return idData;
-      });
-  }
-
-  async getGlobalProfile(address: any) {
-    var otherUserTokens: any = await this.tokenService.getTokenFromAddress(address);
-    var tokenArr: any[] = [];
-    otherUserTokens.result.map((t: any) => {
-      tokenArr.push(t.token_id);
+    for (let i = 0; i < globalData.length; i += 10) {
+      const tokenData = globalData.slice(i, i + 10);
+      
+      batches.push(
+        collectionPath.ref
+          .where(firebase.firestore.FieldPath.documentId(), 'in', tokenData.join().split(','))
+          .where('set_as_pfp', '==', true)
+          .get()
+          .then((results) => results.docs.map((result) => result.data()))
+      );
+    }
+    return Promise.all(batches).then((content: any) => {
+      var dataArr: any = content.flat();
+      return dataArr[0];
     });
-    return await this.db
-      .collection('tokenidtodata')
-      .ref.where(
-        firebase.firestore.FieldPath.documentId(),
-        'in',
-        tokenArr.join().split(',')
-      )
-      .get()
-      .then(({ docs }) => {
-        var otherTokenData = docs.map((doc) => {
-          var tokenData = doc.data();
+  }
+
+  getDataOtherAddr = async (walletAddr: any): Promise<any> => {
+    var globalData: any = await this.getTokenFromAddress(walletAddr);
+
+    if (!globalData || !globalData.length) return [];
+
+    const batches: Array<any> = [];
+    const collectionPath = this.db.collection('tokenidtodata');
+
+    for (let i = 0; i < globalData.length; i += 10) {
+      const tokenData = globalData.slice(i, i + 10);
+
+      batches.push(
+        collectionPath.ref
+          .where(firebase.firestore.FieldPath.documentId(), 'in', tokenData.join().split(','))
+          .get()
+          .then((results) => results.docs.map((result) => result.data()))
+      );
+    }
+      return Promise.all(batches).then((content: any) => {
+        var dataArr: any = content.flat();
+        return dataArr;
+      });
+  }
+
+  getCurrentPFP = async (): Promise<any> => {
+    const dataObj = this.contractService.getAccoutData();
+
+    if (!dataObj.tokens || !dataObj.tokens.length) return [];
+
+    const batches: Array<any> = [];
+    const collectionPath = this.db.collection('tokenidtodata');
+
+    for (let i = 0; i < dataObj.tokens.length; i += 10) {
+      const tokenData = dataObj.tokens.slice(i, i + 10);
+
+      batches.push(
+        collectionPath.ref
+          .where(firebase.firestore.FieldPath.documentId(), 'in', tokenData.join().split(','))
+          .where('set_as_pfp', '==', true)
+          .get()
+          .then((results) => results.docs.map((result) => result.data()))
+      );
+    }
+
+    return Promise.all(batches).then((content: any) => {
+      var pfpTokenArr = content.flat();
+      if (pfpTokenArr.length == 0) {
+        this.db
+          .collection('tokenidtodata')
+          .doc(dataObj.tokens[0].toString())
+          .update({
+            set_as_pfp: true,
+          });
+        return dataObj.tokens[0];
+      } else {
+        var idData = pfpTokenArr.map((doc: any) => {
+          var tokenData = doc;
           return tokenData;
         });
-        return otherTokenData;
-      });
+        var pfpId: any = idData[0];
+        return pfpId.id;
+      }
+    });
+  }
+
+  getCurrentProfile = async (): Promise<any> => {
+    const dataObj = this.contractService.getAccoutData();
+
+    if (!dataObj.tokens || !dataObj.tokens.length) return [];
+
+    const batches: Array<any> = [];
+    const collectionPath = this.db.collection('tokenidtodata');
+
+    for (let i = 0; i < dataObj.tokens.length; i += 10) {
+      const tokenData = dataObj.tokens.slice(i, i + 10);
+
+      batches.push(
+        collectionPath.ref
+          .where(firebase.firestore.FieldPath.documentId(), 'in', tokenData.join().split(','))
+          .get()
+          .then((results) => results.docs.map((result) => result.data()))
+      );
+    }
+
+    return Promise.all(batches).then((content: any) => {
+      var dataArr: any = content.flat();
+      return dataArr;
+    });
   }
 }

@@ -92,7 +92,7 @@ export class ProfileComponent {
 
   onBack(tokenId: number) {
     if (tokenId != undefined) {
-      this.sliderIndexId = tokenId
+      this.sliderIndexId = tokenId;
       this.pfpToken = this.tokensArrObj[tokenId].id;
       this.getComments(this.pfpToken);
       this.profileSlider.swiperRef.slidePrev();
@@ -101,7 +101,7 @@ export class ProfileComponent {
 
   onNext(tokenId: number) {
     if (tokenId != undefined) {
-      this.sliderIndexId = tokenId
+      this.sliderIndexId = tokenId;
       this.pfpToken = this.tokensArrObj[tokenId].id;
       this.getComments(this.pfpToken);
       this.profileSlider.swiperRef.slideNext();
@@ -114,14 +114,18 @@ export class ProfileComponent {
       var pfpTokenData = await this.globalService.getDataOtherAddr(otherUserAddr);
       this.tokensArrObj = pfpTokenData;
       var otherUserToken: any = this.route.snapshot.paramMap.get('token');
-      this.sliderIndexId = this.tokensArrObj.findIndex((x) => x.id == otherUserToken)
+      this.sliderIndexId = this.tokensArrObj.findIndex(
+        (x) => x.id == otherUserToken
+      );
       this.sliderTokenId = Number(
         this.tokensArrObj.findIndex((x) => x.id == otherUserToken)
       );
       this.getComments(otherUserToken);
       this.profileSlider.swiperRef.slideTo(this.sliderTokenId, 3000);
     } else {
-      this.pfpData();
+      setTimeout(() => {
+        this.pfpData();
+      },2000)
       this.tokensArrObj = await this.globalService.getCurrentProfile();
     }
   }
@@ -130,27 +134,26 @@ export class ProfileComponent {
     this.pfpToken = tData;
     this.sliderTokenId = Number(this.tokensArrObj.findIndex((x) => x.id === this.pfpToken));
     this.profileSlider.swiperRef.slideTo(this.sliderTokenId, 2000);
-    this.sliderIndexId = this.tokensArrObj.findIndex((x) => x.id == this.pfpToken)
+    this.sliderIndexId = this.tokensArrObj.findIndex((x) => x.id == this.pfpToken);
     this.getComments(this.pfpToken);
   }
 
   async pfpData() {
     this.pfpToken = await this.globalService.getCurrentPFP();
-    this.sliderTokenId = Number(
-      this.tokensArrObj.findIndex((x) => x.id === this.pfpToken)
-    );
+    this.sliderTokenId = Number(this.tokensArrObj.findIndex((x) => x.id === this.pfpToken));
     this.profileSlider.swiperRef.slideTo(this.sliderTokenId, 2000);
-    this.sliderIndexId = this.tokensArrObj.findIndex((x) => x.id == this.pfpToken)
+    this.sliderIndexId = this.tokensArrObj.findIndex((x) => x.id == this.pfpToken);
     this.getComments(this.pfpToken);
   }
 
   async otherUserData(walletAddr: any) {
-    if (this.accoutData.address == walletAddr && (!this.route.snapshot.paramMap.get('token') || !this.route.snapshot.paramMap.get('tokenAddr'))) {
+    if (this.accoutData.address == walletAddr &&
+      (!this.route.snapshot.paramMap.get('token') ||
+        !this.route.snapshot.paramMap.get('tokenAddr'))
+    ) {
       return this.tokensArrObj[this.sliderIndexId];
     } else {
       var pfpTokenData = await this.globalService.globalTokensData(walletAddr);
-      // var pfpTokenArr = await this.globalService.getGlobalProfile(walletAddr);
-      // var pfpTokenData: any = pfpTokenArr.find((x: any) => x.set_as_pfp == true);
       return pfpTokenData;
     }
   }
@@ -165,8 +168,8 @@ export class ProfileComponent {
     this.userSubComment.meta_add = address;
   };
 
-  openProfile = async (tokenId: number) => {
-    var TokenAddress = await this.tokenService.getAddressFromToken(tokenId);
+  openProfile = async (tokenId: string) => {
+    var TokenAddress = await this.globalService.getAddressFromToken(tokenId);
     this.router.navigate(['/', 'profile', tokenId, TokenAddress]);
   };
 
@@ -176,7 +179,7 @@ export class ProfileComponent {
       .getAll()
       .snapshotChanges()
       .pipe(
-        debounceTime(500),
+        debounceTime(2000),
         map((changes: any) =>
           changes.map((c: any) => ({
             id: c.payload.doc.id,
@@ -200,15 +203,12 @@ export class ProfileComponent {
         this.totalComments = this.dbComments.length;
         this.allSubComment = await Promise.all(
           this.dbComments.map(async (sub: any) => {
-            return await Promise.all(
+            return Promise.all(
               sub.subComment.map(async (subCommentData: any) => {
-                const { id: tokenId, name: userName } =
-                  await this.otherUserData(subCommentData.meta_add);
+                const { id: tokenId, name: userName } = await this.otherUserData(subCommentData.meta_add);
                 var nameOfComment;
                 if (subCommentData.commentTo) {
-                  var commentToObj = await this.otherUserData(
-                    subCommentData.commentTo
-                  );
+                  var commentToObj = await this.otherUserData(subCommentData.commentTo);
                   nameOfComment = '@' + commentToObj.name;
                 }
                 return {
