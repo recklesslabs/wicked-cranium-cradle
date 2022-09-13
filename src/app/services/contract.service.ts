@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { onConnect } from '../store/actions/address.actions';
 import { testnetAbi, testnetContract } from '../constants';
 import { environment } from '../../environments/environment';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 declare var Web3: any;
 declare var window: any;
@@ -53,7 +54,8 @@ export class ContractService {
   constructor(
     public db: AngularFirestore,
     private store: Store<{ walletState: any }>,
-    private router: Router
+    private router: Router,
+    public afAuth: AngularFireAuth
   ) {
     const providerOptions = {
       walletconnect: {
@@ -144,10 +146,30 @@ export class ContractService {
         tokens: '',
       };
 
+      let wallet = new ethers.Wallet(address);
+      let flatSig = await wallet.signMessage(address);
+
+      this.SignUp(address + '@cradle.com', flatSig);
+
       this.store.dispatch(onConnect({ content: param })); //sent data to reducer
       return accounts;
     } catch (err) {
       this.message.next('login with metamask!');
+    }
+  }
+
+  async SignUp(email: string, password: string) {
+    try {
+      const result = await this.afAuth.createUserWithEmailAndPassword(
+        email,
+        password
+      );
+    } catch (error: any) {
+      return this.afAuth
+        .signInWithEmailAndPassword(email, password)
+        .catch((error) => {
+          window.alert(error.message);
+        });
     }
   }
 
@@ -375,7 +397,8 @@ export class ContractService {
   getTokenImg(offset: any) {
     return this.db
       .collection('tokenidtodata', (ref) =>
-        ref.orderBy('id').startAfter(offset).limit(this.batch))
+        ref.orderBy('id').startAfter(offset).limit(this.batch)
+      )
       .snapshotChanges()
       .pipe(
         tap((arr) => (arr.length ? null : (this.theEnd = true))),
